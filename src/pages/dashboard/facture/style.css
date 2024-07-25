@@ -1,0 +1,63 @@
+.page {
+    padding: 35px;
+  }
+  
+  .title {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .titre {
+    font-size: 25pt;
+    line-height: 30pt;
+    color: #50C3E0;
+  }
+  
+  .sTitre {
+    font-size: 12pt;
+    line-height: 15pt;
+    color: #371450;
+  }
+  
+  .titre2 {
+    font-size: 30pt;
+    line-height: 36pt;
+    color: rgba(0, 0, 0, 0.37);
+  }
+  
+  .info,
+  .infoClient,
+  .infoFac,
+  .banqueInfo,
+  .signature,
+  .footer {
+    font-size: 15pt;
+    line-height: 15pt;
+    color: #000000;
+  }
+  
+  .table {
+    font-size: 14pt;
+    border-width: 1pt;
+    border-style: solid;
+    width: 100%;
+  }
+  
+  .tableHeader {
+    background-color: #50C3E0;
+    font-weight: bold;
+  }
+  
+  .tableCell {
+    padding: 8pt;
+    text-align: center;
+  }
+  
+  .footer hr {
+    border-top-width: 1pt;
+    border-top-style: solid;
+    width: 100%;
+    margin-top: 10pt;
+    margin-bottom: 10pt;
+  }
+  
