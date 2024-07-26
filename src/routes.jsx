@@ -7,8 +7,10 @@ import {
   RectangleStackIcon,
  
 } from "@heroicons/react/24/solid";
-import { Home, Profile, Tables,Clients,Projets, Notifications,Users,Etat,Facture} from "@/pages/dashboard";
+import { Home, Profile, Tables} from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
+import { Medecins } from "./pages/dashboard/Medecin/Medecins";
+;
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -32,41 +34,16 @@ export const routes = [
       },
       {
         icon: <TableCellsIcon {...icon} />,
+        name: "Médecins",
+        path: "/Medecins",
+        element: <Medecins />,
+      }  ,
+      {
+        icon: <TableCellsIcon {...icon} />,
         name: "tables",
         path: "/tables",
         element: <Tables />,
-      },
-      {
-        icon: <TableCellsIcon {...icon} />,
-        name: "Gestion des clients",
-        path: "/clients",
-        element: <Clients />,
-      },
-      {
-        icon: <TableCellsIcon {...icon} />,
-        name: "Gestion des utilisateurs",
-        path: "/users",
-        element: <Users />,
-      },
-      {
-        icon: <TableCellsIcon {...icon} />,
-        name: "Gestion des projets",
-        path: "/projets",
-        element: <Projets />,
-      },
-      {
-        icon: <TableCellsIcon {...icon} />,
-        name: "Gestion des Progressions",
-        path: "/etat-avancement",
-        element: <Etat />,
-      },
-      {
-        icon: <TableCellsIcon {...icon} />,
-        name: "Gestion des Factures",
-        path: "/factures",
-        element: <Facture />,
-      },
-      
+      }  
     ],
   },
   {

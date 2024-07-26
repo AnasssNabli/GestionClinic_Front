@@ -1,6 +1,5 @@
-
-import { useState, useEffect } from "react";
-import { useLocation, Link ,useNavigate} from "react-router-dom";
+import { useState } from "react";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { logout } from "@/services/loginservice";
 import {
   Navbar,
@@ -13,19 +12,10 @@ import {
   MenuHandler,
   MenuList,
   MenuItem,
-  Avatar,
 } from "@material-tailwind/react";
-import {
-  UserCircleIcon,
-  Cog6ToothIcon,
-  BellIcon,
-  ClockIcon,
-  CreditCardIcon,
-  Bars3Icon,
-} from "@heroicons/react/24/solid";
+import { Bars3Icon } from "@heroicons/react/24/solid";
 import {
   useMaterialTailwindController,
-  setOpenConfigurator,
   setOpenSidenav,
 } from "@/context";
 
@@ -36,18 +26,20 @@ export function DashboardNavbar() {
   const [layout, page] = pathname.split("/").filter((el) => el !== "");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const route = useLocation().pathname.split("/").slice(1);
-  const handlelogout = async () => {
+
+  const handleLogout = async () => {
     try {
       const token = localStorage.getItem("token");
-      await logout(token);
-      
+      if (token) {
+        await logout(token);
+      }
       localStorage.clear();
-      navigate("/auth/sign-in")
+      navigate("/auth/sign-in");
     } catch (error) {
       setError(error.message);
     }
   };
+
   return (
     <Navbar
       color={fixedNavbar ? "white" : "transparent"}
@@ -99,25 +91,44 @@ export function DashboardNavbar() {
           >
             <Bars3Icon strokeWidth={3} className="h-6 w-6 text-blue-gray-500" />
           </IconButton>
-          <Link to="/auth/sign-in">
-            <Button
-              variant="text"
-              color="blue-gray"
-              className="hidden items-center gap-1 px-4 xl:flex normal-case"
-              onClick={handlelogout}
-            >
-              <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
-              Sign out
-            </Button>
-            <IconButton
-              variant="text"
-              color="blue-gray"
-              className="grid xl:hidden"
-            >
-              <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
-            </IconButton>
-          </Link>
-          
+          <Menu>
+            <MenuHandler>
+              <Button
+                variant="text"
+                color="blue-gray"
+                className="hidden items-center gap-1 px-4 xl:flex normal-case"
+              >
+                <img src="/img/user.png" alt="Profile" className="h-5 w-5" />
+                Votre profil
+              </Button>
+            </MenuHandler>
+            <MenuList>
+              <MenuItem className="flex">
+                <img src="/img/user.png" alt="Profile" className="h-5 w-5 mr-2" />
+                <Link to="/dashboard/profile">Votre profil</Link>
+              </MenuItem>
+              <MenuItem onClick={handleLogout} className="flex">
+                <img src="/img/user.png" alt="Sign out" className="h-5 w-5 mr-2" />
+                <p>Se déconnecter</p>
+              </MenuItem>
+            </MenuList>
+          </Menu>
+          <Menu>
+            <MenuHandler>
+              <IconButton variant="text" color="blue-gray" className="grid xl:hidden">
+                <img src="/img/user.png" alt="Profile" className="h-5 w-5" />
+              </IconButton>
+            </MenuHandler>
+            <MenuList>
+              <MenuItem>
+                <Link to="/profile">Votre profil</Link>
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>
+                <img src="/img/user.png" alt="Sign out" className="h-5 w-5 mr-2" />
+                Se déconnecter
+              </MenuItem>
+            </MenuList>
+          </Menu>
         </div>
       </div>
     </Navbar>

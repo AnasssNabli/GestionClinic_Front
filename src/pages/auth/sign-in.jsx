@@ -1,13 +1,6 @@
-import {
-  Card,
-  Input,
-  Checkbox,
-  Button,
-  Typography,
-} from "@material-tailwind/react";
+import { Input, Button, Typography } from "@material-tailwind/react";
 import { useState } from "react";
-// react-router-dom components
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { login } from "@/services/loginservice";
 
 export function SignIn() {
@@ -15,76 +8,78 @@ export function SignIn() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = await login(email,password); 
+      const token = await login(email, password); 
       localStorage.setItem("token", token);
       window.location.href = "/dashboard/home";
     } catch (error) {
       setError(error.message); 
     }
   };
+
   return (
-    <section className="m-8 flex gap-4">
-      <div className="w-full lg:w-3/5 mt-24">
-        <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4">Sign In</Typography>
-          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your email and password to Sign In.</Typography>
+    <section className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="container mx-auto p-4 lg:w-2/5 flex flex-col items-center">
+        <div className="text-center mb-8">
+          <img
+            src="/img/favicon.png"
+            alt="web site logo"
+            className="w-24 h-24 mx-auto mb-4" 
+          />
+          <Typography variant="h2" className="font-bold mb-4 text-blue-900">Se connecter</Typography>
+          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Entrer votre email et mot de passe pour se connecter</Typography>
         </div>
-        <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
-          <div className="mb-1 flex flex-col gap-6">
-            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
-              Your email
+        <form onSubmit={handleSubmit} className="w-full max-w-md">
+          <div className="mb-6">
+            <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
+              Votre email :
             </Typography>
             <Input
               size="lg"
               placeholder="name@mail.com"
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-              labelProps={{
-                className: "before:content-none after:content-none",
-              }}
+              className="w-full"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
-              Password
+          </div>
+          <div className="mb-6">
+            <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
+              Votre mot de passe :
             </Typography>
             <Input
               type="password"
               size="lg"
               placeholder="********"
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-              labelProps={{
-                className: "before:content-none after:content-none",
-              }}
+              className="w-full"
               value={password}
-              onChange={(e) => setPassword(e.target.value)} 
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          
-          <Button className="mt-6" fullWidth onClick={handleSubmit}>
-            Sign In
+          {error && (
+            <Typography variant="small" color="red" className="mb-4 text-center">
+              {error}
+            </Typography>
+          )}
+          <Button type="submit" className="w-full mt-6 bg-blue-900 text-white hover:bg-blue-800">
+           Se connecter
           </Button>
 
-          <div className="flex items-center justify-between gap-2 mt-6">
-            
-          </div>
-          
           <Typography variant="paragraph" className="text-center text-blue-gray-500 font-medium mt-4">
-            Not registered?
-            <Link to="/auth/sign-up" className="text-gray-900 ml-1">Create account</Link>
+            Vous n’êtes pas inscrit ? 
+            <Link to="/auth/sign-up" className="text-blue-900 ml-1">Créer un compte</Link>
           </Typography>
         </form>
-
       </div>
-      <div className="w-2/5 h-full hidden lg:block">
+      <div className="hidden lg:block lg:w-2/5 m-2">
         <img
-          src="/img/pattern.png"
+          src="/img/login.png"
+          alt="medecin logo"
           className="h-full w-full object-cover rounded-3xl"
         />
       </div>
-
     </section>
   );
 }

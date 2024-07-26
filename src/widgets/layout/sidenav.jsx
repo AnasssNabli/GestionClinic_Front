@@ -12,7 +12,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
   const sidenavTypes = {
-    dark: "bg-gradient-to-br from-gray-800 to-gray-900",
+    blue: "bg-gradient-to-br from-blue-900 to-blue-700",
     white: "bg-white shadow-sm",
     transparent: "bg-transparent",
   };
@@ -28,7 +28,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
         <Link to="/" className="py-6 px-8 text-center">
           <Typography
             variant="h6"
-            color={sidenavType === "dark" ? "white" : "blue-gray"}
+            color={sidenavType === "dark" ? "white" : "blue-900"}
           >
             {brandName}
           </Typography>
@@ -78,8 +78,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
 }
 
 Sidenav.defaultProps = {
-  brandImg: "/img/logo-ct.png",
-  brandName: "Material Tailwind React",
+  brandImg: "/img/favicon.png",
+  brandName: "Gestion Hopital",
 };
 
 Sidenav.propTypes = {

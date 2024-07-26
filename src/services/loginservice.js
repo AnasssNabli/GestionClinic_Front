@@ -21,6 +21,19 @@ const register = async (user) => {
     throw new Error('Registration failed');
   }
 };
+
+const register2 = async (user) => {
+  try {
+    console.log(user);
+    const response = await alexsys.post(`/Auth/Register`, user );
+    console.log("register");
+      return response;
+  } catch (error) {
+    console.log("error register", error);
+    throw new Error('Registration failed');
+  }
+};
+
 const logout = async (token) => {
   try {
     console.log("logout");
@@ -33,4 +46,4 @@ const logout = async (token) => {
 };
 
 
-export { login, register,logout};
+export { login, register,logout , register2};

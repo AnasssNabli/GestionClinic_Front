@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Card,
-  Input,
-  Button,
-  Typography,
-  Radio,
-} from "@material-tailwind/react";
+import { Card, Input, Button, Typography, Radio } from "@material-tailwind/react";
 import { register } from "@/services/loginservice";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -33,57 +27,72 @@ export function SignUp() {
     const newPassword = e.target.value;
     setPassword(newPassword);
     if (!validatePassword(newPassword)) {
-      setPasswordError("Password must contain at least one letter, one number, one special character, and be at least 8 characters long.");
+      setPasswordError("Le mot de passe doit contenir au moins une lettre, un chiffre, un caractère spécial et doit comporter au moins 8 caractères.");
+
     } else {
       setPasswordError("");
     }
   };
 
-  const handleregister = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
+    
+    
     if (!validatePassword(password)) {
-      setPasswordError("Password must contain at least one letter, one number, one special character, and be at least 8 characters long.");
+      setPasswordError("Le mot de passe doit contenir au moins une lettre, un chiffre, un caractère spécial et doit comporter au moins 8 caractères.");
       return;
     }
+  
+  
+    const userObject = {
+      Type: "patient",
+      Email: email,
+      Password: password,
+      Nom: nom,
+      Prenom: prenom,
+      Telephone: telephone,
+      Cin: cin,
+      DateNaissance: dateNaissance,
+      Genre: genre,
+      Adresse: adresse,
+      Historiquemedical: historiqueMedical
+    };
+  
     try {
-      const userObject = {
-        Type: "patient",
-        Email: email,
-        Password: password,
-        Nom: nom,
-        Prenom: prenom,
-        Telephone: telephone,
-        Cin: cin,
-        DateNaissance: dateNaissance,
-        Genre: genre,
-        Adresse: adresse,
-        Historiquemedical: historiqueMedical
-      };
-      console.log(userObject);
+      console.log(userObject);  
       const token = await register(userObject);
       localStorage.setItem("token", token);
-      navigate("/dashboard/home");
+      navigate("/auth/sign-in");  
     } catch (error) {
-      console.log("Registration failed:", error);
+      console.error("Registration failed:", error);  
       setError(error.message); 
     }
   };
+  
 
   return (
-    <section className="m-8 flex">
-      <div className="w-2/5 h-full hidden lg:block">
-        <img
-          src="/img/pattern.png"
-          className="h-full w-full object-cover rounded-3xl"
-        />
-      </div>
-      <div className="w-full lg:w-3/5 flex flex-col items-center justify-center">
+    <section className="m-8 flex flex-col lg:flex-row">
+    <div className="w-full lg:w-4/5 h-full hidden lg:flex items-center justify-center mt-12">
+    <img
+      src="/img/Signup1.jpg"
+      className="max-w-full max-h-full object-cover rounded-3xl"
+      alt="Signup illustration"
+    />
+  </div>
+  
+
+      <div className="w-full lg:w-3/5 flex flex-col items-center justify-center lg:pl-12">
         <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4">Join Us Today</Typography>
-          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your details to register.</Typography>
+          <img
+            src="/img/favicon.png"
+            alt="web site logo"
+            className="w-24 h-24 mx-auto mb-4" 
+          />
+          <Typography variant="h2" className="font-bold mb-4 text-blue-900">Rejoignez-nous dès aujourd’hui</Typography>
+          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal mb-8">Entrez vos informations pour vous inscrire.</Typography>
         </div>
-        <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2" onSubmit={handleregister}>
-          <div className="mb-1 flex flex-col gap-6">
+        <form className="w-full max-w-md lg:max-w-xl" onSubmit={handleRegister}>
+          <div className="space-y-6">
             <div className="flex gap-4">
               <div className="flex-1">
                 <Input
@@ -91,6 +100,7 @@ export function SignUp() {
                   label='Nom'
                   value={nom}
                   onChange={(e) => setNom(e.target.value)} 
+                  className="mb-4"
                 />
               </div>
               <div className="flex-1">
@@ -99,14 +109,16 @@ export function SignUp() {
                   label='Prenom'
                   value={prenom}
                   onChange={(e) => setPrenom(e.target.value)} 
+                  className="mb-4"
                 />
               </div>
             </div>
             <Input
               size="lg"
-              label='Your email'
+              label='Votre email'
               value={email}
               onChange={(e) => setEmail(e.target.value)} 
+              className="mb-4"
             />
             <Input
               type="password"
@@ -115,9 +127,10 @@ export function SignUp() {
               value={password}
               onChange={handlePasswordChange} 
               error={!!passwordError}
+              className="mb-4"
             />
             {passwordError && (
-              <Typography variant="small" color="red">{passwordError}</Typography>
+              <Typography variant="small" color="red" className="mb-4">{passwordError}</Typography>
             )}
             <div className="flex gap-4">
               <div className="flex-1">
@@ -126,6 +139,7 @@ export function SignUp() {
                   label='Telephone'
                   value={telephone}
                   onChange={(e) => setTelephone(e.target.value)} 
+                  className="mb-4"
                 />
               </div>
               <div className="flex-1">
@@ -134,6 +148,7 @@ export function SignUp() {
                   label='CIN'
                   value={cin}
                   onChange={(e) => setCin(e.target.value)} 
+                  className="mb-4"
                 />
               </div>
             </div>
@@ -143,52 +158,58 @@ export function SignUp() {
               label='Date de Naissance'
               value={dateNaissance}
               onChange={(e) => setDateNaissance(e.target.value)} 
+              className="mb-4"
             />
-            
             <Input
               size="lg"
               label='Adresse'
               value={adresse}
               onChange={(e) => setAdresse(e.target.value)} 
+              className="mb-4"
             />
             <Input
               size="lg"
               label='Historique Medical'
               value={historiqueMedical}
               onChange={(e) => setHistoriqueMedical(e.target.value)} 
+              className="mb-4"
             />
-            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
+            <Typography variant="small" className="mb-2 font-medium text-gray-600">
               Genre
             </Typography>
-            <div className="flex gap-10">
-              <Radio
-                name="genre"
-                label="Male"
-                value="M"
-                checked={genre === "M"}
-                onChange={(e) => setGenre(e.target.value)}
-              />
-              <Radio
-                name="genre"
-                label="Female"
-                value="F"
-                checked={genre === "F"}
-                onChange={(e) => setGenre(e.target.value)}
-              />
+            <div className="flex items-center gap-6 mb-6">
+              <label className="flex items-center space-x-2">
+                <Radio
+                  name="genre"
+                  value="M"
+                  checked={genre === "M"}
+                  onChange={(e) => setGenre(e.target.value)}
+                  color='blue-gray'
+                />
+                <Typography variant="small" color="blue-gray">Male</Typography>
+              </label>
+              <label className="flex items-center space-x-2">
+                <Radio
+                  name="genre"
+                  value="F"
+                  checked={genre === "F"}
+                  onChange={(e) => setGenre(e.target.value)}
+                  color='blue-gray'
+                />
+                <Typography variant="small" color="blue-gray">Female</Typography>
+              </label>
             </div>
+            <Button className="w-full bg-blue-900 text-white hover:bg-blue-800" type="submit">
+              Inscrivez-vous maintenant
+            </Button>
+            <div className="space-y-4 mt-8">
+              {error && <Typography variant="small" color="red">{error}</Typography>}
+            </div>
+            <Typography variant="paragraph" className="text-center text-blue-gray-500 font-medium mt-4">
+              Vous avez déjà un compte ?
+              <Link to="/auth/sign-in" className="text-blue-900 ml-1">Se connecter</Link>
+            </Typography>
           </div>
-          
-          <Button className="mt-6" fullWidth type="submit">
-            Register Now
-          </Button>
-
-          <div className="space-y-4 mt-8">
-            {error && <Typography variant="small" color="red">{error}</Typography>}
-          </div>
-          <Typography variant="paragraph" className="text-center text-blue-gray-500 font-medium mt-4">
-            Already have an account?
-            <Link to="/auth/sign-in" className="text-gray-900 ml-1">Sign in</Link>
-          </Typography>
         </form>
       </div>
     </section>
