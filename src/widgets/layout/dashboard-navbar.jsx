@@ -41,7 +41,7 @@ export function DashboardNavbar() {
     try {
       const token = localStorage.getItem("token");
       await logout(token);
-      console.log(33333333);
+      
       localStorage.clear();
       navigate("/auth/sign-in")
     } catch (error) {
