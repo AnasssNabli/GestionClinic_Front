@@ -61,28 +61,26 @@ export function DashboardNavbar() {
             <Link to={`/${layout}`}>
               <Typography
                 variant="small"
-                color="blue-gray"
-                className="font-normal opacity-50 transition-all hover:text-blue-500 hover:opacity-100"
+                
+                className="font-normal opacity-50 transition-all text-blue-900 hover:opacity-100"
               >
                 {layout}
               </Typography>
             </Link>
             <Typography
               variant="small"
-              color="blue-gray"
-              className="font-normal"
+              
+              className="font-normal text-blue-900"
             >
               {page}
             </Typography>
           </Breadcrumbs>
-          <Typography variant="h6" color="blue-gray">
+          <Typography variant="h6" className="text-blue-900">
             {page}
           </Typography>
         </div>
         <div className="flex items-center">
-          <div className="mr-auto md:mr-4 md:w-56">
-            <Input label="Search" />
-          </div>
+          
           <IconButton
             variant="text"
             color="blue-gray"

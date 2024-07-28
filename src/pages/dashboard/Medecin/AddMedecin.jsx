@@ -3,7 +3,9 @@ import {
   Button,
   Dialog,
   Card,
+  Select,
   CardBody,
+  Option,
   CardFooter,
   Typography,
   Input,
@@ -87,6 +89,11 @@ export function AddMedecin(props) {
     return isValid;
   };
 
+
+  const handleSelectChange = (value) => {
+    setFormData({ ...formData, DepartementID: value });
+  };
+  
   const handleSubmit = async () => {
     if (validateForm()) {
       let confirmer = await confirmation();
@@ -144,18 +151,11 @@ export function AddMedecin(props) {
             </svg>
           </IconButton>
         </div>
-        <CardBody className="flex flex-col gap-4 overflow-y-auto max-h-[70vh]">
+        <CardBody className="flex flex-col gap-2 overflow-y-auto max-h-[70vh]">
           <Typography variant="h4" color="blue-gray" className="text-center">
             Ajouter un médecin
           </Typography>
-          <Typography
-            className="mb-3 font-normal text-center"
-            variant="paragraph"
-            color="gray"
-          >
-            Entrer les détails du médecin
-          </Typography>
-          <div className="my-4 flex flex-wrap gap-4">
+          <div className="my-2 flex flex-wrap gap-4">
             <div className="flex-1 min-w-[200px]">
               <Typography
                 variant="small"
@@ -172,7 +172,11 @@ export function AddMedecin(props) {
                 onChange={(e) => handleChange(e, "nom")}
                 error={!!errors.nom}
               />
-              {errors.nom && <Typography color="red" className="mt-1">{errors.nom}</Typography>}
+              {errors.nom && (
+                <Typography color="red" className="mt-1">
+                  {errors.nom}
+                </Typography>
+              )}
             </div>
             <div className="flex-1 min-w-[200px]">
               <Typography
@@ -190,10 +194,43 @@ export function AddMedecin(props) {
                 onChange={(e) => handleChange(e, "prenom")}
                 error={!!errors.prenom}
               />
-              {errors.prenom && <Typography color="red" className="mt-1">{errors.prenom}</Typography>}
+              {errors.prenom && (
+                <Typography color="red" className="mt-1">
+                  {errors.prenom}
+                </Typography>
+              )}
             </div>
           </div>
-          <div className="my-4 flex flex-wrap gap-4">
+          <div className="my-2 flex flex-wrap gap-4">
+            <div className="flex-1 min-w-[200px]">
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-2 font-medium"
+              >
+                Département
+              </Typography>
+              <Select
+                error={!!errors.departement}
+                label="Département"
+                onChange={(e) => handleSelectChange(e)}
+                name="departement"
+              >
+                {props.departements.map(departement => (
+                  <Option key={departement.id_dep} value={departement.id_dep.toString()}>
+                    {departement.nom}
+                  </Option>
+                ))}
+              </Select>
+              {errors.departement && (
+                <Typography color="red" className="mt-1">
+                  {errors.departement}
+                </Typography>
+              )}
+
+            </div>
+          </div>
+          <div className="my-2 flex flex-wrap gap-4">
             <div className="flex-1 min-w-[200px]">
               <Typography
                 variant="small"
@@ -210,7 +247,11 @@ export function AddMedecin(props) {
                 onChange={(e) => handleChange(e, "cin")}
                 error={!!errors.cin}
               />
-              {errors.cin && <Typography color="red" className="mt-1">{errors.cin}</Typography>}
+              {errors.cin && (
+                <Typography color="red" className="mt-1">
+                  {errors.cin}
+                </Typography>
+              )}
             </div>
             <div className="flex-1 min-w-[200px]">
               <Typography
@@ -228,10 +269,14 @@ export function AddMedecin(props) {
                 onChange={(e) => handleChange(e, "telephone")}
                 error={!!errors.telephone}
               />
-              {errors.telephone && <Typography color="red" className="mt-1">{errors.telephone}</Typography>}
+              {errors.telephone && (
+                <Typography color="red" className="mt-1">
+                  {errors.telephone}
+                </Typography>
+              )}
             </div>
           </div>
-          <div className="my-4 flex flex-wrap gap-4">
+          <div className="my-2 flex flex-wrap gap-4">
             <div className="flex-1 min-w-[200px]">
               <Typography
                 variant="small"
@@ -249,7 +294,11 @@ export function AddMedecin(props) {
                 onChange={(e) => handleChange(e, "dateNaissance")}
                 error={!!errors.dateNaissance}
               />
-              {errors.dateNaissance && <Typography color="red" className="mt-1">{errors.dateNaissance}</Typography>}
+              {errors.dateNaissance && (
+                <Typography color="red" className="mt-1">
+                  {errors.dateNaissance}
+                </Typography>
+              )}
             </div>
             <div className="flex-1 min-w-[200px]">
               <Typography
@@ -267,46 +316,61 @@ export function AddMedecin(props) {
                 onChange={(e) => handleChange(e, "email")}
                 error={!!errors.email}
               />
-              {errors.email && <Typography color="red" className="mt-1">{errors.email}</Typography>}
+              {errors.email && (
+                <Typography color="red" className="mt-1">
+                  {errors.email}
+                </Typography>
+              )}
             </div>
           </div>
-          <div className="my-4">
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="mb-2 font-medium"
-            >
-              Spécialisation
-            </Typography>
-            <Input
-              name="specialisation"
-              label="Spécialisation"
-              size="lg"
-              value={formData.specialisation}
-              onChange={(e) => handleChange(e, "specialisation")}
-              error={!!errors.specialisation}
-            />
-            {errors.specialisation && <Typography color="red" className="mt-1">{errors.specialisation}</Typography>}
+          <div className="my-2 flex flex-wrap gap-4">
+            <div className="flex-1 min-w-[200px]">
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-2 font-medium"
+              >
+                Mot de passe
+              </Typography>
+              <Input
+                type="password"
+                name="password"
+                label="Mot de passe"
+                size="lg"
+                value={formData.password}
+                onChange={handlePasswordChange}
+                error={!!errors.password}
+              />
+              {errors.password && (
+                <Typography color="red" className="mt-1">
+                  {errors.password}
+                </Typography>
+              )}
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-2 font-medium"
+              >
+                Spécialisation
+              </Typography>
+              <Input
+                name="specialisation"
+                label="Spécialisation"
+                size="lg"
+                value={formData.specialisation}
+                onChange={(e) => handleChange(e, "specialisation")}
+                error={!!errors.specialisation}
+              />
+              {errors.specialisation && (
+                <Typography color="red" className="mt-1">
+                  {errors.specialisation}
+                </Typography>
+              )}
+            </div>
           </div>
-          <div className="my-4">
-            <Typography
-              variant="small"
-              color="blue-gray"
-              className="mb-2 font-medium"
-            >
-              Mot de passe
-            </Typography>
-            <Input
-              type="password"
-              name="password"
-              label="Mot de passe"
-              size="lg"
-              value={formData.password}
-              onChange={(e) => handleChange(e, "password")}
-              error={!!errors.password}
-            />
-            {errors.password && <Typography color="red" className="mt-1">{errors.password}</Typography>}
-          </div>
+         
         </CardBody>
         <CardFooter className="pt-0 flex justify-between">
           <Button fullWidth variant="gradient" onClick={props.handleOpen}>

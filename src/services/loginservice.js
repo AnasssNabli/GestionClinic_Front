@@ -37,7 +37,7 @@ const register2 = async (user) => {
 const logout = async (token) => {
   try {
     console.log("logout");
-    const response = await alexsys.post(`/logout/`, { token });
+    const response = await alexsys.post(`/Auth/Logout`, { token });
     return response.data.message;
   } catch (error) {
     console.log("error logout", error);

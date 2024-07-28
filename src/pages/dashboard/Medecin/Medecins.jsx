@@ -9,13 +9,15 @@ import {
 } from "@material-tailwind/react";
 import { confirmation } from "@/widgets/alert_confirmation";
 import { UserPlusIcon } from "@heroicons/react/24/outline";
-import axios from 'axios';
+import { fetchDepartements } from '@/services/departement.service';
+
 import { fetchMedecins, deleteMedecin } from "@/services/medecins.services";
 import AddMedecin from "./AddMedecin"; 
 import SweetAlert from 'sweetalert2'; 
 
 export function Medecins() {
   const [medecins, setMedecins] = useState([]);
+  const [departements, setDepartements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -28,6 +30,8 @@ export function Medecins() {
       const response = await fetchMedecins();
       setMedecins(response.data);
       setLoading(false);
+      const response2 = await fetchDepartements();
+      setDepartements(response2.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -66,7 +70,7 @@ export function Medecins() {
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["Nom", "Spécialisation", "Date de naissance" , "CIN" , "Téléphone", ""].map((el) => (
+                {["Nom", "Spécialisation", "Date de naissance", "CIN", "Téléphone", "Département", ""].map((el) => (
                   <th
                     key={el}
                     className="border-b border-blue-gray-50 py-3 px-5 text-left"
@@ -84,10 +88,10 @@ export function Medecins() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="6" className="py-3 px-5 text-center">Chargement...</td>
+                  <td colSpan="7" className="py-3 px-5 text-center">Chargement...</td>
                 </tr>
               ) : (
-                medecins.map(({ id_medecin, utilisateur, specialisation }, key) => {
+                medecins.map(({ id_medecin, utilisateur, specialisation, departement }, key) => {
                   const className = `py-3 px-5 ${
                     key === medecins.length - 1
                       ? ""
@@ -134,6 +138,11 @@ export function Medecins() {
                         </Typography>
                       </td>
                       <td className={className}>
+                        <Typography className="text-xs font-normal text-blue-gray-500">
+                          {departement ? departement.nom : 'N/A'}
+                        </Typography>
+                      </td>
+                      <td className={className}>
                         <Button
                           onClick={() => handleDelete(id_medecin)}
                           color="red"
@@ -150,11 +159,11 @@ export function Medecins() {
           </table>
         </CardBody>
       </Card>
-      {}
       <AddMedecin
         open={isDialogOpen}
         handleOpen={() => setIsDialogOpen(false)}
         setReload={fetchData} 
+        departements={departements}
       />
     </div>
   );

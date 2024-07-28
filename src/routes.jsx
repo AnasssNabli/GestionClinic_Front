@@ -10,7 +10,7 @@ import {
 import { Home, Profile, Tables} from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import { Medecins } from "./pages/dashboard/Medecin/Medecins";
-;
+import Departement from "./pages/dashboard/Departements/Departement";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -37,6 +37,12 @@ export const routes = [
         name: "Médecins",
         path: "/Medecins",
         element: <Medecins />,
+      }  ,
+      {
+        icon: <TableCellsIcon {...icon} />,
+        name: "Departements",
+        path: "/Departements",
+        element: <Departement />,
       }  ,
       {
         icon: <TableCellsIcon {...icon} />,
