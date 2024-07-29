@@ -93,7 +93,7 @@ export function AddDepartement(props) {
           </IconButton>
         </div>
         <CardBody className="flex flex-col gap-4 overflow-y-auto max-h-[70vh]">
-          <Typography variant="h4" color="blue-gray" className="text-center">
+          <Typography variant="h4"  className="text-center text-blue-900">
             Ajouter un département
           </Typography>
           <Typography
@@ -145,7 +145,7 @@ export function AddDepartement(props) {
             Annuler
           </Button>
           <div className="w-4"></div>
-          <Button fullWidth variant="gradient" onClick={handleSubmit}>
+          <Button fullWidth variant="gradient" color="blue" onClick={handleSubmit}>
             Ajouter
           </Button>
         </CardFooter>

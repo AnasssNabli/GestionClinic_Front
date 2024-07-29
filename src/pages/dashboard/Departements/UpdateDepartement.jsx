@@ -12,7 +12,7 @@ import {
 } from "@material-tailwind/react";
 import { updateDepartement } from "@/services/departement.service";
 import { confirmation } from "@/widgets/alert_confirmation";
-
+import SweetAlert from 'sweetalert2'; 
 export function UpdateDepartement(props) {
   const { departement } = props;
   const [formData, setFormData] = useState({
@@ -53,7 +53,7 @@ export function UpdateDepartement(props) {
           await updateDepartement(departement.id_dep, formData);
           props.setReload(formData);
           props.handleOpen();
-          
+          SweetAlert.fire("Bravo", "Département mis à jour avec succès", "success");
           console.log("Département mis à jour avec succès !");
         } catch (error) {
           console.error("Erreur lors de la mise à jour du département :", error);

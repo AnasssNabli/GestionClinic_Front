@@ -47,7 +47,7 @@ export function Medecins() {
       try {
         await deleteMedecin(id);
         SweetAlert.fire("Bravo", "Médecin supprimé avec succès.", "success");
-        fetchData(); // Recharger les données après la suppression
+        fetchData(); 
       } catch (err) {
         SweetAlert.fire("Erreur", "Une erreur s'est produite lors de la suppression du médecin.", "error");
       }

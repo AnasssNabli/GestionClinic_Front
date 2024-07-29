@@ -94,7 +94,7 @@ export function DashboardNavbar() {
               <Button
                 variant="text"
                 color="blue-gray"
-                className="hidden items-center gap-1 px-4 xl:flex normal-case"
+                className="hidden items-center gap-1 px-4 xl:flex normal-case text-blue-900"
               >
                 <img src="/img/user.png" alt="Profile" className="h-5 w-5" />
                 Votre profil

@@ -13,7 +13,7 @@ import {
 } from "@material-tailwind/react";
 import { confirmation } from "@/widgets/alert_confirmation";
 import { register2 } from "@/services/loginservice";
-
+import SweetAlert from 'sweetalert2'; 
 export function AddMedecin(props) {
   const [formData, setFormData] = useState({
     "type" : "medecin" , 
@@ -102,6 +102,7 @@ export function AddMedecin(props) {
           await register2(formData);
           props.setReload(formData); 
           props.handleOpen(); 
+          SweetAlert.fire("Bravo", "Médecin  ajouté avec succès .", "success");
           console.log("Médecin ajouté avec succès !");
         } catch (error) {
           console.error("Erreur lors de l'ajout du médecin :", error);
@@ -152,7 +153,7 @@ export function AddMedecin(props) {
           </IconButton>
         </div>
         <CardBody className="flex flex-col gap-2 overflow-y-auto max-h-[70vh]">
-          <Typography variant="h4" color="blue-gray" className="text-center">
+          <Typography variant="h4" className="text-center text-blue-900">
             Ajouter un médecin
           </Typography>
           <div className="my-2 flex flex-wrap gap-4">
@@ -377,7 +378,7 @@ export function AddMedecin(props) {
             Annuler
           </Button>
           <div className="w-4"></div>
-          <Button fullWidth variant="gradient" onClick={handleSubmit}>
+          <Button fullWidth variant="gradient" color="blue" onClick={handleSubmit}>
             Ajouter
           </Button>
         </CardFooter>
