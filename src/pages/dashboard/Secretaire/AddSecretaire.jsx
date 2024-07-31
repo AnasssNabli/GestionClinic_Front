@@ -26,7 +26,7 @@ export function AddSecretaire(props) {
     telephone: "",
     dateNaissance: "",
     email: "",
-    superieurId: "", 
+    Superieurid_medecin: "", 
     password: "",
   });
 
@@ -64,8 +64,8 @@ export function AddSecretaire(props) {
       newErrors.password = "Le mot de passe est requis";
       isValid = false;
     }
-    if (!formData.superieurId) {
-      newErrors.superieurId = "Le supérieur est requis";
+    if (!formData.Superieurid_medecin) {
+      newErrors.Superieurid_medecin = "Le supérieur est requis";
       isValid = false;
     }
 
@@ -106,7 +106,7 @@ export function AddSecretaire(props) {
   };
 
   const handleSelectChange = (value) => {
-     setFormData({ ...formData, superieurId: value });
+     setFormData({ ...formData, Superieurid_medecin: value });
   };
 
   return (
@@ -192,8 +192,8 @@ export function AddSecretaire(props) {
               <Select
               label="Supérieur"
               onChange={(e) => handleSelectChange(e)}
-              name="superieurId"
-              error={!!errors.superieurId}
+              name="Superieurid_medecin"
+              error={!!errors.Superieurid_medecin}
             >
             {props.medecins.map((medecin, key) => (
                 <Option key={key} value={medecin.id_medecin.toString()}>
@@ -201,7 +201,7 @@ export function AddSecretaire(props) {
                 </Option>
               ))}
             </Select>
-            {errors.superieurId && <Typography color="red" className="mt-1">{errors.superieurId}</Typography>}
+            {errors.Superieurid_medecin && <Typography color="red" className="mt-1">{errors.Superieurid_medecin}</Typography>}
             </div>
           </div>
         </CardBody>

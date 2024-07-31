@@ -14,6 +14,7 @@ import { fetchMedecins } from '@/services/medecins.services';
 import SweetAlert from 'sweetalert2'; 
 import AddSecretaire from './AddSecretaire';
 import UpdateSecretaire from './UpdateSecretaire'; 
+
 export function Secretaires() {
   const [secretaires, setSecretaires] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +43,6 @@ export function Secretaires() {
     setIsDialogOpen(true);
   };
 
-  
   const handleDelete = async (id) => {
     const confirmer = await confirmation();
     if (confirmer) {
@@ -76,7 +76,7 @@ export function Secretaires() {
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["Nom", "Email", "Téléphone", "Date de Naissance", "CIN", ""].map((el) => (
+                {["Nom", "Email", "Téléphone", , "CIN", "Supérieur", ""].map((el) => (
                   <th
                     key={el}
                     className="border-b border-blue-gray-50 py-3 px-5 text-left"
@@ -94,7 +94,7 @@ export function Secretaires() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="6" className="py-3 px-5 text-center">Chargement...</td>
+                  <td colSpan="7" className="py-3 px-5 text-center">Chargement...</td>
                 </tr>
               ) : (
                 secretaires.map((secretaire, key) => {
@@ -133,20 +133,21 @@ export function Secretaires() {
                           {secretaire.utilisateur.telephone}
                         </Typography>
                       </td>
-                      <td className={className}>
-                        <Typography className="text-xs font-semibold text-blue-gray-500">
-                          {secretaire.utilisateur.dateNaissance}
-                        </Typography>
-                      </td>
+                     
                       <td className={className}>
                         <Typography className="text-xs font-semibold text-blue-gray-500">
                           {secretaire.utilisateur.cin}
                         </Typography>
                       </td>
                       <td className={className}>
+                        <Typography className="text-xs font-semibold text-blue-gray-500">
+                          {secretaire.superieur?.utilisateur?.nom} {secretaire.superieur?.utilisateur?.prenom}
+                        </Typography>
+                      </td>
+                      <td className={className}>
                         <Button
                           onClick={() => {
-                            setSecretaireToUpdate(secretaire.utilisateur);
+                            setSecretaireToUpdate(secretaire);
                             setIsDialogupOpen(true);
                           }}
                           color="blue"

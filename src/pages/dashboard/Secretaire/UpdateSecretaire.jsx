@@ -18,30 +18,34 @@ import SweetAlert from 'sweetalert2';
 export function UpdateSecretaire(props) {
   const { secretaire, medecins, open, handleOpen, setReload } = props;
 
+  // Initialize formData based on the provided object structure
   const [formData, setFormData] = useState({
-    nom: secretaire.nom || "",
-    prenom: secretaire.prenom || "",
-    cin: secretaire.cin || "",
-    telephone: secretaire.telephone || "",
-    dateNaissance: secretaire.dateNaissance || "",
-    email: secretaire.email || "",
-    superieurId: secretaire.superieurId || "",
-    password: secretaire.password || "",
+    nom: "",
+    prenom: "",
+    cin: "",
+    telephone: "",
+    dateNaissance: "",
+    email: "",
+    Superieurid_medecin: "",
+    password: "",
   });
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    setFormData({
-      nom: secretaire.nom || "",
-      prenom: secretaire.prenom || "",
-      cin: secretaire.cin || "",
-      telephone: secretaire.telephone || "",
-      dateNaissance: secretaire.dateNaissance || "",
-      email: secretaire.email || "",
-      superieurId: secretaire.superieurId || "",
-      password: secretaire.password || "",
-    });
+    // Check if secretaire is valid and has the expected structure
+    if (secretaire && secretaire.utilisateur) {
+      setFormData({
+        nom: secretaire.utilisateur.nom || "",
+        prenom: secretaire.utilisateur.prenom || "",
+        cin: secretaire.utilisateur.cin || "",
+        telephone: secretaire.utilisateur.telephone || "",
+        dateNaissance: secretaire.utilisateur.dateNaissance || "",
+        email: secretaire.utilisateur.email || "",
+        Superieurid_medecin: secretaire.superieur?.id_medecin || "",
+        password: "",
+      });
+    }
   }, [secretaire]);
 
   const handleChange = (e, name) => {
@@ -51,8 +55,8 @@ export function UpdateSecretaire(props) {
   };
 
   const handleSelectChange = (value) => {
-    setFormData({ ...formData, superieurId: value });
-    setErrors({ ...errors, superieurId: "" });
+    setFormData({ ...formData, Superieurid_medecin: value });
+    setErrors({ ...errors, Superieurid_medecin: "" });
   };
 
   const validateForm = () => {
@@ -87,8 +91,8 @@ export function UpdateSecretaire(props) {
       newErrors.password = "Le mot de passe est requis";
       isValid = false;
     }
-    if (!formData.superieurId) {
-      newErrors.superieurId = "Le supérieur est requis";
+    if (!formData.Superieurid_medecin) {
+      newErrors.Superieurid_medecin = "Le supérieur est requis";
       isValid = false;
     }
 
@@ -101,7 +105,7 @@ export function UpdateSecretaire(props) {
       const confirmer = await confirmation();
       if (confirmer) {
         try {
-          await updateSecretaire(secretaire.id_secretaire, formData);
+          await updateSecretaire(secretaire.secretaireID, formData);
           setReload();
           handleOpen();
           SweetAlert.fire("Bravo", "Secrétaire mis à jour avec succès", "success");
@@ -196,17 +200,17 @@ export function UpdateSecretaire(props) {
               <Select
                 label="Supérieur"
                 onChange={handleSelectChange}
-                name="superieurId"
-                value={formData.superieurId}
-                error={!!errors.superieurId}
+                name="Superieurid_medecin"
+                value={formData.Superieurid_medecin}
+                error={!!errors.Superieurid_medecin}
               >
                 {medecins.map((medecin, key) => (
-                  <Option key={key} value={medecin.id_medecin.toString()}>
+                  <Option key={key} value={medecin.id_medecin}>
                     {medecin.utilisateur.nom} {medecin.utilisateur.prenom}
                   </Option>
                 ))}
               </Select>
-              {errors.superieurId && <Typography color="red" className="mt-1">{errors.superieurId}</Typography>}
+              {errors.Superieurid_medecin && <Typography color="red" className="mt-1">{errors.Superieurid_medecin}</Typography>}
             </div>
           </div>
         </CardBody>

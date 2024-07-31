@@ -19,6 +19,7 @@ export const createSecretaire = (secretaire) => {
 }
 
 export const updateSecretaire = (id, updatedSecretaire) => {
+  console.log(updatedSecretaire);
   return alexsys.put(`/Secretaire/${id}`, updatedSecretaire, { headers });
 }
 

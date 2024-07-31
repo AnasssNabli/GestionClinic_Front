@@ -38,6 +38,7 @@ const logout = async (token) => {
   try {
     console.log("logout");
     const response = await alexsys.post(`/Auth/Logout`, { token });
+    console.log("logout good");
     return response.data.message;
   } catch (error) {
     console.log("error logout", error);
