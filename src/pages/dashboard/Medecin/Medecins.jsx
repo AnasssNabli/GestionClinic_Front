@@ -10,9 +10,9 @@ import {
 import { confirmation } from "@/widgets/alert_confirmation";
 import { UserPlusIcon } from "@heroicons/react/24/outline";
 import { fetchDepartements } from '@/services/departement.service';
-
 import { fetchMedecins, deleteMedecin } from "@/services/medecins.services";
 import AddMedecin from "./AddMedecin"; 
+import UpdateMedecin from "./UpdateMedecin"; 
 import SweetAlert from 'sweetalert2'; 
 
 export function Medecins() {
@@ -20,6 +20,8 @@ export function Medecins() {
   const [departements, setDepartements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDialogupOpen, setIsDialogupOpen] = useState(false); 
+  const [medecinToUpdate, setMedecinToUpdate] = useState(null); 
 
   useEffect(() => {
     fetchData();
@@ -52,6 +54,10 @@ export function Medecins() {
         SweetAlert.fire("Erreur", "Une erreur s'est produite lors de la suppression du médecin.", "error");
       }
     }
+  };
+
+  const handleCloseDialogForUpdate = () => {
+    setIsDialogupOpen(false);
   };
 
   return (
@@ -99,7 +105,7 @@ export function Medecins() {
                   }`;
 
                   return (
-                    <tr key={id_medecin}>
+                    <tr key={key}>
                       <td className={className}>
                         <div className="flex items-center gap-4">
                           <Avatar src={"/img/doctor.png"} alt={utilisateur.nom} size="sm" variant="rounded" />
@@ -144,6 +150,17 @@ export function Medecins() {
                       </td>
                       <td className={className}>
                         <Button
+                          onClick={() => {
+                            setMedecinToUpdate({ id_medecin, utilisateur, specialisation, departement });
+                            setIsDialogupOpen(true);
+                          }}
+                          color="blue"
+                          size="sm"
+                          className="mr-2"
+                        >
+                          Modifier
+                        </Button>
+                        <Button
                           onClick={() => handleDelete(id_medecin)}
                           color="red"
                           size="sm"
@@ -165,6 +182,16 @@ export function Medecins() {
         setReload={fetchData} 
         departements={departements}
       />
+      
+      {isDialogupOpen && (
+        <UpdateMedecin
+          open={isDialogupOpen}
+          handleOpen={handleCloseDialogForUpdate}
+          medecin={medecinToUpdate}
+          setReload={fetchData}
+          departements={departements}
+        />
+      )}
     </div>
   );
 }

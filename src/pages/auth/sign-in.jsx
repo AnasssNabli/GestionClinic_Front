@@ -2,7 +2,6 @@ import { Input, Button, Typography } from "@material-tailwind/react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "@/services/loginservice";
-
 export function SignIn() {
   const [email, setEmail] = useState(""); 
   const [password, setPassword] = useState("");
@@ -12,11 +11,11 @@ export function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = await login(email, password); 
+      const token = await login(email, password);
       localStorage.setItem("token", token);
-      window.location.href = "/dashboard/home";
+      navigate("/dashboard/home");
     } catch (error) {
-      setError(error.message); 
+      setError(error.message);
     }
   };
 
@@ -39,7 +38,7 @@ export function SignIn() {
             </Typography>
             <Input
               size="lg"
-              placeholder="name@mail.com"
+              placeholder="nom@mail.com"
               className="w-full"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

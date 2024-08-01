@@ -10,15 +10,15 @@ import {
   IconButton,
   Select,
   Option,
+  Textarea,
 } from "@material-tailwind/react";
-import { updateSecretaire } from "@/services/secretaires.service";
+import { updatePatient } from "@/services/patients.service";
 import { confirmation } from "@/widgets/alert_confirmation";
-import SweetAlert from 'sweetalert2';
+import Swal from "sweetalert2";
 
-export function UpdateSecretaire(props) {
-  const { secretaire, medecins, open, handleOpen, setReload } = props;
+export function UpdatePatient(props) {
+  const { patient, open, handleOpen, setReload } = props;
 
-  
   const [formData, setFormData] = useState({
     nom: "",
     prenom: "",
@@ -26,27 +26,30 @@ export function UpdateSecretaire(props) {
     telephone: "",
     dateNaissance: "",
     email: "",
-    Superieurid_medecin: "",
-    password: "",
+    adresse: "",
+    HistoriqueMedical: "",
+    genre: "",
+    password: "", 
   });
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-   
-    if (secretaire && secretaire.utilisateur) {
+    if (patient && patient.utilisateur) {
       setFormData({
-        nom: secretaire.utilisateur.nom || "",
-        prenom: secretaire.utilisateur.prenom || "",
-        cin: secretaire.utilisateur.cin || "",
-        telephone: secretaire.utilisateur.telephone || "",
-        dateNaissance: secretaire.utilisateur.dateNaissance || "",
-        email: secretaire.utilisateur.email || "",
-        Superieurid_medecin: secretaire.superieur?.id_medecin || "",
-        password: "",
+        nom: patient.utilisateur.nom || "",
+        prenom: patient.utilisateur.prenom || "",
+        cin: patient.utilisateur.cin || "",
+        telephone: patient.utilisateur.telephone || "",
+        dateNaissance: patient.utilisateur.dateNaissance || "",
+        email: patient.utilisateur.email || "",
+        adresse: patient.adresse || "",
+        HistoriqueMedical: patient.historiquemedical || "",
+        genre: patient.genre ? "F" : "M" || "", 
+        password: patient.utilisateur.password || "", 
       });
     }
-  }, [secretaire]);
+  }, [patient]);
 
   const handleChange = (e, name) => {
     const { value } = e.target;
@@ -55,8 +58,8 @@ export function UpdateSecretaire(props) {
   };
 
   const handleSelectChange = (value) => {
-    setFormData({ ...formData, Superieurid_medecin: value });
-    setErrors({ ...errors, Superieurid_medecin: "" });
+    setFormData({ ...formData, genre: value });
+    setErrors({ ...errors, genre: "" });
   };
 
   const validateForm = () => {
@@ -87,12 +90,16 @@ export function UpdateSecretaire(props) {
       newErrors.email = "L'email est requis";
       isValid = false;
     }
-    if (!formData.password) {
-      newErrors.password = "Le mot de passe est requis";
+    if (!formData.genre) {
+      newErrors.genre = "Le genre est requis";
       isValid = false;
     }
-    if (!formData.Superieurid_medecin) {
-      newErrors.Superieurid_medecin = "Le supérieur est requis";
+    if (!formData.adresse) {
+      newErrors.adresse = "L'adresse est requise";
+      isValid = false;
+    }
+    if (!formData.HistoriqueMedical) {
+      newErrors.HistoriqueMedical = "L'historique médical est requis";
       isValid = false;
     }
 
@@ -105,12 +112,13 @@ export function UpdateSecretaire(props) {
       const confirmer = await confirmation();
       if (confirmer) {
         try {
-          await updateSecretaire(secretaire.secretaireID, formData);
+          await updatePatient(patient.id_patient, formData);
           setReload();
           handleOpen();
-          SweetAlert.fire("Bravo", "Secrétaire mis à jour avec succès", "success");
+          Swal.fire("Bravo", "Patient mis à jour avec succès", "success");
         } catch (error) {
-          console.error("Erreur lors de la mise à jour du secrétaire :", error);
+          console.error("Erreur lors de la mise à jour du patient :", error);
+          Swal.fire("Erreur", "Une erreur s'est produite lors de la mise à jour du patient.", "error");
         }
       } else {
         handleOpen();
@@ -124,7 +132,7 @@ export function UpdateSecretaire(props) {
       handler={handleOpen}
       className="bg-transparent shadow-none"
     >
-      <Card className="mx-auto w-full max-w-[60rem] p-6">
+      <Card className="mx-auto w-full max-w-[80rem] p-6">
         <div className="flex justify-end pe-2 pt-2">
           <IconButton
             size="sm"
@@ -148,18 +156,14 @@ export function UpdateSecretaire(props) {
             </svg>
           </IconButton>
         </div>
-        <CardBody className="flex flex-col gap-4 overflow-y-auto max-h-[70vh]">
+        <CardBody className="flex flex-col gap-6 overflow-y-auto max-h-[80vh]">
           <Typography variant="h4" color="blue-gray" className="text-center text-blue-900">
-            Modifier une secrétaire
+            Modifier un patient
           </Typography>
-          <Typography
-            className="mb-3 font-normal text-center"
-            variant="paragraph"
-            color="gray"
-          >
-            Entrer les détails du secrétaire
+          <Typography className="mb-4 font-normal text-center" variant="paragraph" color="gray">
+            Entrer les détails du patient
           </Typography>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { name: 'nom', label: 'Nom', type: 'text' },
               { name: 'prenom', label: 'Prénom', type: 'text' },
@@ -167,14 +171,10 @@ export function UpdateSecretaire(props) {
               { name: 'telephone', label: 'Téléphone', type: 'text' },
               { name: 'dateNaissance', label: 'Date de Naissance', type: 'date' },
               { name: 'email', label: 'Email', type: 'email' },
-              { name: 'password', label: 'Mot de Passe', type: 'password' }
+              { name: 'password', label: 'Mot de Passe', type: 'password' },
             ].map((field, index) => (
               <div className="my-4" key={index}>
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="mb-2 font-medium"
-                >
+                <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
                   {field.label}
                 </Typography>
                 <Input
@@ -190,27 +190,50 @@ export function UpdateSecretaire(props) {
               </div>
             ))}
             <div className="my-4">
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="mb-2 font-medium"
-              >
-                Supérieur
+              <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
+                Genre
               </Typography>
               <Select
-                label="Supérieur"
-                onChange={handleSelectChange}
-                name="Superieurid_medecin"
-                value={formData.Superieurid_medecin}
-                error={!!errors.Superieurid_medecin}
+                label="Genre"
+                name="genre"
+                onChange={(e) => handleSelectChange(e.target.value)}  
+                value={formData.genre}  
+                error={!!errors.genre}
               >
-                {medecins.map((medecin, key) => (
-                  <Option key={key} value={medecin.id_medecin}>
-                    {medecin.utilisateur.nom} {medecin.utilisateur.prenom}
-                  </Option>
-                ))}
+                <Option value="M">Homme</Option>
+                <Option value="F">Femme</Option>
               </Select>
-              {errors.Superieurid_medecin && <Typography color="red" className="mt-1">{errors.Superieurid_medecin}</Typography>}
+              {errors.genre && <Typography color="red" className="mt-1">{errors.genre}</Typography>}
+            </div>
+            <div className="my-4 col-span-full">
+              <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
+                Historique Médical
+              </Typography>
+              <Textarea
+                name="HistoriqueMedical"
+                label="Historique Médical"
+                size="lg"
+                value={formData.HistoriqueMedical}
+                onChange={(e) => handleChange(e, 'HistoriqueMedical')}
+                error={!!errors.HistoriqueMedical}
+                rows={4}
+              />
+              {errors.HistoriqueMedical && <Typography color="red" className="mt-1">{errors.HistoriqueMedical}</Typography>}
+            </div>
+            <div className="my-4 col-span-full">
+              <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
+                Adresse
+              </Typography>
+              <Textarea
+                name="adresse"
+                label="Adresse"
+                size="lg"
+                value={formData.adresse}
+                onChange={(e) => handleChange(e, 'adresse')}
+                error={!!errors.adresse}
+                rows={4}
+              />
+              {errors.adresse && <Typography color="red" className="mt-1">{errors.adresse}</Typography>}
             </div>
           </div>
         </CardBody>
@@ -228,4 +251,4 @@ export function UpdateSecretaire(props) {
   );
 }
 
-export default UpdateSecretaire;
+export default UpdatePatient;

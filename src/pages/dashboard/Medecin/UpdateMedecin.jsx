@@ -11,14 +11,13 @@ import {
   Select,
   Option,
 } from "@material-tailwind/react";
-import { updateSecretaire } from "@/services/secretaires.service";
+import { updateMedecin } from "@/services/medecins.services";
 import { confirmation } from "@/widgets/alert_confirmation";
 import SweetAlert from 'sweetalert2';
 
-export function UpdateSecretaire(props) {
-  const { secretaire, medecins, open, handleOpen, setReload } = props;
+export function UpdateMedecin(props) {
+  const { medecin, departements, open, handleOpen, setReload } = props;
 
-  
   const [formData, setFormData] = useState({
     nom: "",
     prenom: "",
@@ -26,27 +25,28 @@ export function UpdateSecretaire(props) {
     telephone: "",
     dateNaissance: "",
     email: "",
-    Superieurid_medecin: "",
+    specialisation: "",
+    DepartementID: "",
     password: "",
   });
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-   
-    if (secretaire && secretaire.utilisateur) {
+    if (medecin && medecin.utilisateur) {
       setFormData({
-        nom: secretaire.utilisateur.nom || "",
-        prenom: secretaire.utilisateur.prenom || "",
-        cin: secretaire.utilisateur.cin || "",
-        telephone: secretaire.utilisateur.telephone || "",
-        dateNaissance: secretaire.utilisateur.dateNaissance || "",
-        email: secretaire.utilisateur.email || "",
-        Superieurid_medecin: secretaire.superieur?.id_medecin || "",
+        nom: medecin.utilisateur.nom || "",
+        prenom: medecin.utilisateur.prenom || "",
+        cin: medecin.utilisateur.cin || "",
+        telephone: medecin.utilisateur.telephone || "",
+        dateNaissance: medecin.utilisateur.dateNaissance || "",
+        email: medecin.utilisateur.email || "",
+        specialisation: medecin.specialisation || "",
+        DepartementID: medecin.departement.id_dep || "",
         password: "",
       });
     }
-  }, [secretaire]);
+  }, [medecin]);
 
   const handleChange = (e, name) => {
     const { value } = e.target;
@@ -55,8 +55,8 @@ export function UpdateSecretaire(props) {
   };
 
   const handleSelectChange = (value) => {
-    setFormData({ ...formData, Superieurid_medecin: value });
-    setErrors({ ...errors, Superieurid_medecin: "" });
+    setFormData({ ...formData, DepartementID: value });
+    setErrors({ ...errors, DepartementID: "" });
   };
 
   const validateForm = () => {
@@ -87,12 +87,12 @@ export function UpdateSecretaire(props) {
       newErrors.email = "L'email est requis";
       isValid = false;
     }
-    if (!formData.password) {
-      newErrors.password = "Le mot de passe est requis";
+    if (!formData.specialisation) {
+      newErrors.specialisation = "La spécialisation est requise";
       isValid = false;
     }
-    if (!formData.Superieurid_medecin) {
-      newErrors.Superieurid_medecin = "Le supérieur est requis";
+    if (!formData.DepartementID) {
+      newErrors.DepartementID = "Le département est requis";
       isValid = false;
     }
 
@@ -105,12 +105,12 @@ export function UpdateSecretaire(props) {
       const confirmer = await confirmation();
       if (confirmer) {
         try {
-          await updateSecretaire(secretaire.secretaireID, formData);
+          await updateMedecin(medecin.id_medecin, formData);
           setReload();
           handleOpen();
-          SweetAlert.fire("Bravo", "Secrétaire mis à jour avec succès", "success");
+          SweetAlert.fire("Bravo", "Médecin mis à jour avec succès", "success");
         } catch (error) {
-          console.error("Erreur lors de la mise à jour du secrétaire :", error);
+          console.error("Erreur lors de la mise à jour du médecin :", error);
         }
       } else {
         handleOpen();
@@ -150,14 +150,14 @@ export function UpdateSecretaire(props) {
         </div>
         <CardBody className="flex flex-col gap-4 overflow-y-auto max-h-[70vh]">
           <Typography variant="h4" color="blue-gray" className="text-center text-blue-900">
-            Modifier une secrétaire
+            Modifier un médecin
           </Typography>
           <Typography
             className="mb-3 font-normal text-center"
             variant="paragraph"
             color="gray"
           >
-            Entrer les détails du secrétaire
+            Entrer les détails du médecin
           </Typography>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
@@ -167,6 +167,7 @@ export function UpdateSecretaire(props) {
               { name: 'telephone', label: 'Téléphone', type: 'text' },
               { name: 'dateNaissance', label: 'Date de Naissance', type: 'date' },
               { name: 'email', label: 'Email', type: 'email' },
+              { name: 'specialisation', label: 'Spécialisation', type: 'text' },
               { name: 'password', label: 'Mot de Passe', type: 'password' }
             ].map((field, index) => (
               <div className="my-4" key={index}>
@@ -195,22 +196,22 @@ export function UpdateSecretaire(props) {
                 color="blue-gray"
                 className="mb-2 font-medium"
               >
-                Supérieur
+                Département
               </Typography>
               <Select
-                label="Supérieur"
+                label="Département"
                 onChange={handleSelectChange}
-                name="Superieurid_medecin"
-                value={formData.Superieurid_medecin}
-                error={!!errors.Superieurid_medecin}
+                name="DepartementID"
+                value={formData.DepartementID}
+                error={!!errors.DepartementID}
               >
-                {medecins.map((medecin, key) => (
-                  <Option key={key} value={medecin.id_medecin}>
-                    {medecin.utilisateur.nom} {medecin.utilisateur.prenom}
+                {departements.map((departement, key) => (
+                  <Option key={key} value={departement.id_dep}>
+                    {departement.nom}
                   </Option>
                 ))}
               </Select>
-              {errors.Superieurid_medecin && <Typography color="red" className="mt-1">{errors.Superieurid_medecin}</Typography>}
+              {errors.DepartementID && <Typography color="red" className="mt-1">{errors.DepartementID}</Typography>}
             </div>
           </div>
         </CardBody>
@@ -228,4 +229,4 @@ export function UpdateSecretaire(props) {
   );
 }
 
-export default UpdateSecretaire;
+export default UpdateMedecin;
