@@ -2,7 +2,7 @@ import { alexsys } from "./envirenment";
 const login = async (Email, Password) => {
   try {
     const response = await alexsys.post(`/Auth/Login`, { Email, Password });
-    console.log(response.data.token);
+    console.log(response.data.type);
     return response.data.token;
   } catch (error) {
     console.log("error login", error);
@@ -25,14 +25,34 @@ const register = async (user) => {
 const register2 = async (user) => {
   try {
     console.log(user);
-    const response = await alexsys.post(`/Auth/Register`, user );
-    console.log("register");
-      return response;
+
+    // Register the user
+    const response = await alexsys.post(`/Auth/Register`, user);
+    console.log("register    :    ",response.data);
+
+    // If the user type is 'medecin', proceed with additional calls
+    if (user.type === 'medecin') {
+      
+      console.log('entered :');
+
+      // Create Disponibilities
+      const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      const disponibilities = daysOfWeek.flatMap(day => [
+        { id_user: response.data, jourDeLaSemaine: day, heureDebut: '08.00', heureFin: '12.00' },
+        { id_user: response.data, jourDeLaSemaine: day, heureDebut: '14.00', heureFin: '18.00' },
+      ]);
+
+      await alexsys.post('/Disponibilite/Disponibiliteaddd', disponibilities);
+      console.log('Disponibilities created');
+    }
+
+    return response;
   } catch (error) {
     console.log("error register", error);
     throw new Error('Registration failed');
   }
 };
+
 
 const logout = async (token) => {
   try {

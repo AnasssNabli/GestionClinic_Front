@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Input, Button, Typography, Radio } from "@material-tailwind/react";
-import { register } from "@/services/loginservice";
+import { register } from "@/services/login.service";
 import { Link, useNavigate } from "react-router-dom";
 
 export function SignUp() {

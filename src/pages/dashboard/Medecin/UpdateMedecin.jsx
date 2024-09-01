@@ -42,7 +42,7 @@ export function UpdateMedecin(props) {
         dateNaissance: medecin.utilisateur.dateNaissance || "",
         email: medecin.utilisateur.email || "",
         specialisation: medecin.specialisation || "",
-        DepartementID: medecin.departement.id_dep || "",
+        DepartementID: medecin.departementID || "",
         password: "",
       });
     }

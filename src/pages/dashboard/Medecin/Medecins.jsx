@@ -97,7 +97,7 @@ export function Medecins() {
                   <td colSpan="7" className="py-3 px-5 text-center">Chargement...</td>
                 </tr>
               ) : (
-                medecins.map(({ id_medecin, utilisateur, specialisation, departement }, key) => {
+                medecins.map(({ id_medecin, utilisateur, specialisation, departement ,departementID}, key) => {
                   const className = `py-3 px-5 ${
                     key === medecins.length - 1
                       ? ""
@@ -151,7 +151,7 @@ export function Medecins() {
                       <td className={className}>
                         <Button
                           onClick={() => {
-                            setMedecinToUpdate({ id_medecin, utilisateur, specialisation, departement });
+                            setMedecinToUpdate({ id_medecin, utilisateur, specialisation, departementID });
                             setIsDialogupOpen(true);
                           }}
                           color="blue"

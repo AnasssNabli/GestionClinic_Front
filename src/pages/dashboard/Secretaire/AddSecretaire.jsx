@@ -13,7 +13,7 @@ import {
 } from "@material-tailwind/react";
 import { confirmation } from "@/widgets/alert_confirmation";
 import { createSecretaire } from "@/services/secretaires.service";
-import { register2 } from "@/services/loginservice";
+import { register2 } from "@/services/login.service";
 import SweetAlert from 'sweetalert2'; 
 export function AddSecretaire(props) {
   const { open, handleOpen, setReload } = props;

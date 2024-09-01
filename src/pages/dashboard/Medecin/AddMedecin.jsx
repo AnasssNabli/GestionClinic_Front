@@ -12,7 +12,7 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 import { confirmation } from "@/widgets/alert_confirmation";
-import { register2 } from "@/services/loginservice";
+import { register2 } from "@/services/login.service";
 import SweetAlert from 'sweetalert2'; 
 export function AddMedecin(props) {
   const [formData, setFormData] = useState({

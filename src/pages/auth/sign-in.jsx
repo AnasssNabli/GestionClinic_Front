@@ -1,7 +1,7 @@
 import { Input, Button, Typography } from "@material-tailwind/react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "@/services/loginservice";
+import { login } from "@/services/login.service";
 export function SignIn() {
   const [email, setEmail] = useState(""); 
   const [password, setPassword] = useState("");

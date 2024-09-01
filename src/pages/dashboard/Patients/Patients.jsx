@@ -69,7 +69,7 @@ export function Patients() {
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["Nom", "Email", "Téléphone", "CIN", "Adresse", "Date de Naissance", ""].map((el) => (
+                {["Nom", "Email", "Téléphone", "CIN", "Adresse", ""].map((el) => (
                   <th
                     key={el}
                     className="border-b border-blue-gray-50 py-3 px-5 text-left"
@@ -141,11 +141,7 @@ export function Patients() {
                             {patient.adresse}
                           </Typography>
                         </td>
-                        <td className={className}>
-                          <Typography className="text-xs font-semibold text-blue-gray-500">
-                            {patient.utilisateur?.dateNaissance}
-                          </Typography>
-                        </td>
+
                         <td className={className}>
                           <Button
                             onClick={() => {

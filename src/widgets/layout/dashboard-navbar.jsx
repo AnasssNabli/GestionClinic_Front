@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
-import { logout } from "@/services/loginservice";
+import { logout } from "@/services/login.service";
 import {
   Navbar,
   Typography,
