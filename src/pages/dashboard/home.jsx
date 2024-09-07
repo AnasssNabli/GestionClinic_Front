@@ -1,260 +1,252 @@
-import React from "react";
-import {
-  Typography,
-  Card,
-  CardHeader,
-  CardBody,
-  IconButton,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
-  Avatar,
-  Tooltip,
-  Progress,
-} from "@material-tailwind/react";
-import {
-  EllipsisVerticalIcon,
-  ArrowUpIcon,
-} from "@heroicons/react/24/outline";
-import { StatisticsCard } from "@/widgets/cards";
-import { StatisticsChart } from "@/widgets/charts";
-import {
-  statisticsCardsData,
-  statisticsChartsData,
-  projectsTableData,
-  ordersOverviewData,
-} from "@/data";
-import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
-export function Home() {
+import React, { useState, useEffect } from "react";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
+// Composant Carousel pour la Vue d'Ensemble de la Santé Cardiaque
+const HeartHealthCarousel = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
 
+  const slides = [
+    {
+      id: 1,
+      title: "Vue d'Ensemble de la Santé Cardiaque",
+      description: "Maintenir une bonne santé cardiaque est essentiel pour la longévité.",
+      extraInfo: "SpO2 97%, Battements cardiaques réguliers",
+      img: "/img/santé.jpg",
+    },
+    {
+      id: 2,
+      title: "Importance du Sommeil",
+      description: "Le sommeil est crucial pour la récupération et la santé cardiaque globale.",
+      extraInfo: "Il est recommandé de dormir 7 à 9 heures par nuit.",
+      img: "/img/someil.jpg",
+    },
+    {
+      id: 3,
+      title: "Habitudes Alimentaires Saines",
+      description: "Une alimentation équilibrée aide à améliorer la fonction cardiovasculaire.",
+      extraInfo: "Réduisez la consommation de sel, de sucre et d'aliments transformés.",
+      img: "/img/alimentation.jpg",
+    },
+    {
+      id: 4,
+      title: "Importance de l'Exercice",
+      description: "Faire de l'exercice régulièrement renforce le cœur et améliore la circulation sanguine.",
+      extraInfo: "Essayez de faire au moins 30 minutes d'activité physique par jour.",
+      img: "/img/exercice.jpg",
+    },
+    {
+      id: 5,
+      title: "Gestion du Stress",
+      description: "Le stress chronique peut nuire à la santé cardiaque. Apprenez à le gérer efficacement.",
+      extraInfo: "Des techniques comme la méditation et le yoga peuvent être bénéfiques.",
+      img: "/img/stress.jpg",
+    },
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((prevIndex) => (prevIndex + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [slides.length]);
 
   return (
-    <div className="mt-12">
-      <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
-        {statisticsCardsData.map(({ icon, title, footer, ...rest }) => (
-          <StatisticsCard
-            key={title}
-            {...rest}
-            title={title}
-            icon={React.createElement(icon, {
-              className: "w-6 h-6 text-white",
-            })}
-            footer={
-              <Typography className="font-normal text-blue-gray-600">
-                <strong className={footer.color}>{footer.value}</strong>
-                &nbsp;{footer.label}
-              </Typography>
-            }
-          />
-        ))}
-      </div>
-      <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
-        {statisticsChartsData.map((props) => (
-          <StatisticsChart
-            key={props.title}
-            {...props}
-            footer={
-              <Typography
-                variant="small"
-                className="flex items-center font-normal text-blue-gray-600"
-              >
-                <ClockIcon strokeWidth={2} className="h-4 w-4 text-blue-gray-400" />
-                &nbsp;{props.footer}
-              </Typography>
-            }
-          />
-        ))}
-      </div>
-      <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
-        <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
-          <CardHeader
-            floated={false}
-            shadow={false}
-            color="transparent"
-            className="m-0 flex items-center justify-between p-6"
+    <div className="relative overflow-hidden mb-6">
+      <div
+        className="flex transition-transform duration-700 ease-in-out"
+        style={{
+          transform: `translateX(-${activeIndex * 100}%)`,
+          width: `${slides.length * 100}%`,
+        }}
+      >
+        {slides.map((slide, index) => (
+          <div
+            key={index}
+            className="w-full flex-shrink-0 bg-white shadow-lg rounded-2xl p-6"
+            style={{ minWidth: "100%" }}
           >
-            <div>
-              <Typography variant="h6" color="blue-gray" className="mb-1">
-                Projects
-              </Typography>
-              <Typography
-                variant="small"
-                className="flex items-center gap-1 font-normal text-blue-gray-600"
-              >
-                <CheckCircleIcon strokeWidth={3} className="h-4 w-4 text-blue-gray-200" />
-                <strong>30 done</strong> this month
-              </Typography>
-            </div>
-            <Menu placement="left-start">
-              <MenuHandler>
-                <IconButton size="sm" variant="text" color="blue-gray">
-                  <EllipsisVerticalIcon
-                    strokeWidth={3}
-                    fill="currenColor"
-                    className="h-6 w-6"
-                  />
-                </IconButton>
-              </MenuHandler>
-              <MenuList>
-                <MenuItem>Action</MenuItem>
-                <MenuItem>Another Action</MenuItem>
-                <MenuItem>Something else here</MenuItem>
-              </MenuList>
-            </Menu>
-          </CardHeader>
-          <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-            <table className="w-full min-w-[640px] table-auto">
-              <thead>
-                <tr>
-                  {["companies", "members", "budget", "completion"].map(
-                    (el) => (
-                      <th
-                        key={el}
-                        className="border-b border-blue-gray-50 py-3 px-6 text-left"
-                      >
-                        <Typography
-                          variant="small"
-                          className="text-[11px] font-medium uppercase text-blue-gray-400"
-                        >
-                          {el}
-                        </Typography>
-                      </th>
-                    )
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {projectsTableData.map(
-                  ({ img, name, members, budget, completion }, key) => {
-                    const className = `py-3 px-5 ${
-                      key === projectsTableData.length - 1
-                        ? ""
-                        : "border-b border-blue-gray-50"
-                    }`;
-
-                    return (
-                      <tr key={name}>
-                        <td className={className}>
-                          <div className="flex items-center gap-4">
-                            <Avatar src={img} alt={name} size="sm" />
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-bold"
-                            >
-                              {name}
-                            </Typography>
-                          </div>
-                        </td>
-                        <td className={className}>
-                          {members.map(({ img, name }, key) => (
-                            <Tooltip key={name} content={name}>
-                              <Avatar
-                                src={img}
-                                alt={name}
-                                size="xs"
-                                variant="circular"
-                                className={`cursor-pointer border-2 border-white ${
-                                  key === 0 ? "" : "-ml-2.5"
-                                }`}
-                              />
-                            </Tooltip>
-                          ))}
-                        </td>
-                        <td className={className}>
-                          <Typography
-                            variant="small"
-                            className="text-xs font-medium text-blue-gray-600"
-                          >
-                            {budget}
-                          </Typography>
-                        </td>
-                        <td className={className}>
-                          <div className="w-10/12">
-                            <Typography
-                              variant="small"
-                              className="mb-1 block text-xs font-medium text-blue-gray-600"
-                            >
-                              {completion}%
-                            </Typography>
-                            <Progress
-                              value={completion}
-                              variant="gradient"
-                              color={completion === 100 ? "green" : "blue"}
-                              className="h-1"
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  }
-                )}
-              </tbody>
-            </table>
-          </CardBody>
-        </Card>
-        <Card className="border border-blue-gray-100 shadow-sm">
-          <CardHeader
-            floated={false}
-            shadow={false}
-            color="transparent"
-            className="m-0 p-6"
-          >
-            <Typography variant="h6" color="blue-gray" className="mb-2">
-              Orders Overview
-            </Typography>
-            <Typography
-              variant="small"
-              className="flex items-center gap-1 font-normal text-blue-gray-600"
-            >
-              <ArrowUpIcon
-                strokeWidth={3}
-                className="h-3.5 w-3.5 text-green-500"
+            <div className="relative w-full h-96"> {/* Set a fixed height here */}
+              <img
+                src={slide.img}
+                alt={slide.title}
+                className="object-cover w-full h-full rounded-2xl" // Ensure full width and cover
               />
-              <strong>24%</strong> this month
-            </Typography>
-          </CardHeader>
-          <CardBody className="pt-0">
-            {ordersOverviewData.map(
-              ({ icon, color, title, description }, key) => (
-                <div key={title} className="flex items-start gap-4 py-3">
-                  <div
-                    className={`relative p-1 after:absolute after:-bottom-6 after:left-2/4 after:w-0.5 after:-translate-x-2/4 after:bg-blue-gray-50 after:content-[''] ${
-                      key === ordersOverviewData.length - 1
-                        ? "after:h-0"
-                        : "after:h-4/6"
-                    }`}
-                  >
-                    {React.createElement(icon, {
-                      className: `!w-5 !h-5 ${color}`,
-                    })}
-                  </div>
-                  <div>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="block font-medium"
-                    >
-                      {title}
-                    </Typography>
-                    <Typography
-                      as="span"
-                      variant="small"
-                      className="text-xs font-medium text-blue-gray-500"
-                    >
-                      {description}
-                    </Typography>
-                  </div>
-                </div>
-              )
-            )}
-          </CardBody>
-        </Card>
+            </div>
+            <div className="mt-4 text-blue-900">
+              <h2 className="text-3xl font-bold">{slide.title}</h2>
+              <p className="text-sm mt-2">{slide.description}</p>
+              {slide.extraInfo && (
+                <p className="text-xs text-gray-500">{slide.extraInfo}</p>
+              )}
+              <button className="mt-4 text-blue-500 font-semibold">Bienvennue chez nous</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex justify-center space-x-2 mt-4">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            className={`w-3 h-3 rounded-full ${
+              activeIndex === index ? "bg-blue-600" : "bg-gray-300"
+            }`}
+            onClick={() => setActiveIndex(index)}
+          />
+        ))}
       </div>
     </div>
   );
-}
+};
 
-export default Home;
+// Composant Carousel pour les Docteurs
+const DoctorCarousel = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const doctors = [
+    {
+      id: 1,
+      name: "Dr. Jean Dupont",
+      speciality: "Cardiologue",
+      img: "/path/to/doctor1-image.png",
+    },
+    {
+      id: 2,
+      name: "Dr. Marie Dubois",
+      speciality: "Neurologue",
+      img: "/path/to/doctor2-image.png",
+    },
+    {
+      id: 3,
+      name: "Dr. Alain Durand",
+      speciality: "Pédiatre",
+      img: "/path/to/doctor3-image.png",
+    },
+    {
+      id: 4,
+      name: "Dr. Sophie Martin",
+      speciality: "Dermatologue",
+      img: "/path/to/doctor4-image.png",
+    },
+  ];
+
+  const handleNext = () => {
+    setActiveIndex((prevIndex) => (prevIndex + 1) % doctors.length);
+  };
+
+  const handlePrev = () => {
+    setActiveIndex((prevIndex) =>
+      prevIndex === 0 ? doctors.length - 1 : prevIndex - 1
+    );
+  };
+
+  return (
+    <div className="relative">
+      <div className="flex items-center">
+        {doctors.map((doctor, index) => (
+          <div
+            key={doctor.id}
+            className={`w-1/3 p-4 transform transition-transform duration-500 ${
+              index === activeIndex ? "opacity-100 scale-105" : "opacity-50 scale-95"
+            }`}
+          >
+            <div className="bg-white shadow-lg rounded-2xl p-6 text-center">
+              <img
+                src={doctor.img}
+                alt={doctor.name}
+                className="w-24 h-24 object-cover rounded-full mx-auto mb-4"
+              />
+              <h3 className="text-lg font-bold text-blue-900">{doctor.name}</h3>
+              <p className="text-gray-500">{doctor.speciality}</p>
+              <button className="mt-4 text-blue-500 font-semibold">Voir Profil</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex justify-between mt-4">
+        <button onClick={handlePrev} className="text-blue-500 font-semibold">
+          Précédent
+        </button>
+        <button onClick={handleNext} className="text-blue-500 font-semibold">
+          Suivant
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export function Home() {
+  return (
+    <div className="p-6 bg-gradient-to-b from-blue-50 to-blue-200 min-h-screen">
+      {/* Carousel Vue d'Ensemble de la Santé Cardiaque */}
+      <HeartHealthCarousel />
+
+      {/* Méditation et Récupération */}
+      <div className="grid grid-cols-2 gap-6 mb-6">
+        {/* Objectif de Récupération avec Progression Circulaire */}
+        <div className="bg-white shadow-lg rounded-2xl p-6">
+          <h2 className="text-2xl font-bold text-blue-900 mb-4">Objectif de Récupération</h2>
+          <div className="w-40 mx-auto">
+            <CircularProgressbar
+              value={80}
+              text={`80%`}
+              styles={buildStyles({
+                pathColor: "#3B82F6",
+                textColor: "#1E3A8A",
+                trailColor: "#D1D5DB",
+              })}
+            />
+          </div>
+        </div>
+
+        {/* Décoration du Calendrier */}
+        <div className="bg-white shadow-lg rounded-2xl p-6">
+          <h2 className="text-2xl font-bold text-blue-900 mb-4">Vue Mensuelle</h2>
+          <div className="w-40 mx-auto">
+          <CircularProgressbar
+          value={90}
+          text={`90%`}
+          styles={buildStyles({
+            pathColor: "#3B82F6",
+            textColor: "#1E3A8A",
+            trailColor: "#D1D5DB",
+          })}
+        />
+          </div>
+        </div>
+      </div>
+
+      {/* Choisir votre docteur personnel */}
+      <div className="bg-white shadow-lg rounded-2xl p-6 mb-6">
+        <h2 className="text-3xl font-bold text-blue-900 mb-4">Choisissez votre docteur personnel</h2>
+        <DoctorCarousel />
+      </div>
+
+      {/* Localisation de l'Hôpital */}
+      <div className="bg-white shadow-lg rounded-2xl p-6 mb-6">
+        <h2 className="text-3xl font-bold text-blue-900 mb-4">Trouvez-nous</h2>
+        <p className="text-gray-700 mb-4">
+          Notre hôpital est situé au 123 Boulevard du Bien-Être, Ville de la Santé. Nous offrons des soins 24h/24 et une large gamme de services médicaux pour garantir que votre santé est entre de bonnes mains.
+        </p>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.835434509319!2d144.953736315844!3d-37.81627974202167!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11fd81%3A0x5045675218ce6e0!2sHospital!5e0!3m2!1sen!2sus!4v1624908398440!5m2!1sen!2sus"
+          width="100%"
+          height="300"
+          style={{ border: 0 }}
+          allowFullScreen=""
+          loading="lazy"
+          title="Localisation de l'Hôpital"
+        ></iframe>
+      </div>
+      <div className="bg-gradient-to-r from-blue-600 to-blue-900 shadow-lg rounded-2xl p-6 mb-6 text-white">
+      <h2 className="text-3xl font-bold mb-4">Suivi Personnel du Sommeil</h2>
+      <p className="mb-4">Suivez vos habitudes de sommeil et améliorez votre santé au fil du temps.</p>
+      <button className="bg-white text-blue-900 px-4 py-2 rounded-lg">
+        Prenez un rendez-vous
+      </button>
+    </div>
+    </div>
+  );
+}

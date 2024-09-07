@@ -31,3 +31,30 @@ export const updateDisponibilite = async (disponibilities, day) => {
     console.error('Error updating disponibilites:', error);
   }
 };
+export const getDisponibilite = async (day, date, idmedecin) => {
+  try {
+    console.log(day, date, idmedecin);
+
+    // Convert idmedecin to integer
+    const idMedecinInt = parseInt(idmedecin, 10);
+
+    // Prepare the request body
+    const requestBody = {
+      JourDeLaSemaine: day,
+      Date: date,
+      Id_Medecin: idMedecinInt
+    };
+
+    // Call the /RendezVous/GetFilteredDisponibilite endpoint with POST
+    const response = await alexsys.post('/RendezVous/GetFilteredDisponibilite', requestBody, {
+      headers
+    });
+
+    console.log('Filtered Disponibilite:', response.data);
+    return response.data; // Return the data for further use
+
+  } catch (error) {
+    console.error('Error fetching filtered disponibilite:', error);
+  }
+};
+

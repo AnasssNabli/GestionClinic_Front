@@ -3,7 +3,9 @@ const login = async (Email, Password) => {
   try {
     const response = await alexsys.post(`/Auth/Login`, { Email, Password });
     console.log(response.data.type);
-    return response.data.token;
+    console.log(response.data);
+    
+    return response.data;
   } catch (error) {
     console.log("error login", error);
     throw new Error('Invalid email or password');

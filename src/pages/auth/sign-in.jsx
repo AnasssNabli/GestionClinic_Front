@@ -11,9 +11,10 @@ export function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = await login(email, password);
-      localStorage.setItem("token", token);
-      navigate("/dashboard/home");
+      const res = await login(email, password);
+      localStorage.setItem("token", res.token);
+      localStorage.setItem("type", res.type);
+      window.location.href = "/dashboard/home";
     } catch (error) {
       setError(error.message);
     }

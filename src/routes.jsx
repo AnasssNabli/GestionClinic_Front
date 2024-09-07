@@ -14,6 +14,7 @@ import Departement from "./pages/dashboard/Departements/Departement";
 import { Secretaires } from "./pages/dashboard/Secretaire/Secretaires";
 import Patients from "./pages/dashboard/Patients/Patients";
 import {Disponibilite} from "./pages/dashboard/Disponibilite/disponibilite";
+import RendezVousMain from "./pages/dashboard/RendezVous/Rendezvousmain";
 const icon = {
   className: "w-5 h-5 text-inherit",
 };
@@ -60,9 +61,9 @@ export const routes = [
       }  ,
       {
         icon: <TableCellsIcon {...icon} />,
-        name: "tables",
-        path: "/tables",
-        element: <Tables />,
+        name: "Rendez Vous",
+        path: "/RendezVous",
+        element: <RendezVousMain />,
       }  ,
       {
         icon: <TableCellsIcon {...icon} />,
