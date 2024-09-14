@@ -16,7 +16,7 @@ import { updatePatient } from "@/services/patients.service";
 import { confirmation } from "@/widgets/alert_confirmation";
 import Swal from "sweetalert2";
 
-export function UpdatePatient(props) {
+export  function UpdatePatient(props) {
   const { patient, open, handleOpen, setReload } = props;
 
   const [formData, setFormData] = useState({
@@ -29,7 +29,7 @@ export function UpdatePatient(props) {
     adresse: "",
     HistoriqueMedical: "",
     genre: "",
-    password: "", 
+    password: "Anas246@", 
   });
 
   const [errors, setErrors] = useState({});
@@ -46,7 +46,7 @@ export function UpdatePatient(props) {
         adresse: patient.adresse || "",
         HistoriqueMedical: patient.historiquemedical || "",
         genre: patient.genre ? "F" : "M" || "", 
-        password: patient.utilisateur.password || "", 
+        password: "Anas246@", 
       });
     }
   }, [patient]);
@@ -90,10 +90,7 @@ export function UpdatePatient(props) {
       newErrors.email = "L'email est requis";
       isValid = false;
     }
-    if (!formData.genre) {
-      newErrors.genre = "Le genre est requis";
-      isValid = false;
-    }
+    
     if (!formData.adresse) {
       newErrors.adresse = "L'adresse est requise";
       isValid = false;
@@ -156,14 +153,14 @@ export function UpdatePatient(props) {
             </svg>
           </IconButton>
         </div>
-        <CardBody className="flex flex-col gap-6 overflow-y-auto max-h-[80vh]">
+        <CardBody className="flex flex-col gap-3 overflow-y-auto max-h-[80vh]">
           <Typography variant="h4" color="blue-gray" className="text-center text-blue-900">
             Modifier un patient
           </Typography>
           <Typography className="mb-4 font-normal text-center" variant="paragraph" color="gray">
             Entrer les détails du patient
           </Typography>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               { name: 'nom', label: 'Nom', type: 'text' },
               { name: 'prenom', label: 'Prénom', type: 'text' },
@@ -171,9 +168,9 @@ export function UpdatePatient(props) {
               { name: 'telephone', label: 'Téléphone', type: 'text' },
               { name: 'dateNaissance', label: 'Date de Naissance', type: 'date' },
               { name: 'email', label: 'Email', type: 'email' },
-              { name: 'password', label: 'Mot de Passe', type: 'password' },
+              
             ].map((field, index) => (
-              <div className="my-4" key={index}>
+              <div key={index}>
                 <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
                   {field.label}
                 </Typography>
@@ -189,60 +186,47 @@ export function UpdatePatient(props) {
                 {errors[field.name] && <Typography color="red" className="mt-1">{errors[field.name]}</Typography>}
               </div>
             ))}
-            <div className="my-4">
-              <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
-                Genre
-              </Typography>
-              <Select
-                label="Genre"
-                name="genre"
-                onChange={(e) => handleSelectChange(e.target.value)}  
-                value={formData.genre}  
-                error={!!errors.genre}
-              >
-                <Option value="M">Homme</Option>
-                <Option value="F">Femme</Option>
-              </Select>
-              {errors.genre && <Typography color="red" className="mt-1">{errors.genre}</Typography>}
-            </div>
-            <div className="my-4 col-span-full">
-              <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
-                Historique Médical
-              </Typography>
-              <Textarea
-                name="HistoriqueMedical"
-                label="Historique Médical"
-                size="lg"
-                value={formData.HistoriqueMedical}
-                onChange={(e) => handleChange(e, 'HistoriqueMedical')}
-                error={!!errors.HistoriqueMedical}
-                rows={4}
-              />
-              {errors.HistoriqueMedical && <Typography color="red" className="mt-1">{errors.HistoriqueMedical}</Typography>}
-            </div>
-            <div className="my-4 col-span-full">
-              <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
-                Adresse
-              </Typography>
-              <Textarea
-                name="adresse"
-                label="Adresse"
-                size="lg"
-                value={formData.adresse}
-                onChange={(e) => handleChange(e, 'adresse')}
-                error={!!errors.adresse}
-                rows={4}
-              />
-              {errors.adresse && <Typography color="red" className="mt-1">{errors.adresse}</Typography>}
+           
+            <div className="col-span-2 grid grid-cols-2 gap-4">
+              <div>
+                <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
+                  Historique Médical
+                </Typography>
+                <Textarea
+                  name="HistoriqueMedical"
+                  label="Historique Médical"
+                  size="lg"
+                  value={formData.HistoriqueMedical}
+                  onChange={(e) => handleChange(e, 'HistoriqueMedical')}
+                  error={!!errors.HistoriqueMedical}
+                  rows={4}
+                />
+                {errors.HistoriqueMedical && <Typography color="red" className="mt-1">{errors.HistoriqueMedical}</Typography>}
+              </div>
+              <div>
+                <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
+                  Adresse
+                </Typography>
+                <Textarea
+                  name="adresse"
+                  label="Adresse"
+                  size="lg"
+                  value={formData.adresse}
+                  onChange={(e) => handleChange(e, 'adresse')}
+                  error={!!errors.adresse}
+                  rows={4}
+                />
+                {errors.adresse && <Typography color="red" className="mt-1">{errors.adresse}</Typography>}
+              </div>
             </div>
           </div>
         </CardBody>
         <CardFooter className="pt-0 flex justify-between">
-          <Button fullWidth variant="gradient" onClick={handleOpen}>
+          <Button fullWidth className="bg-blue-900" onClick={handleOpen}>
             Annuler
           </Button>
           <div className="w-4"></div>
-          <Button fullWidth variant="gradient" color="blue" onClick={handleSubmit}>
+          <Button fullWidth className="bg-blue-900" onClick={handleSubmit}>
             Mettre à jour
           </Button>
         </CardFooter>
@@ -250,5 +234,4 @@ export function UpdatePatient(props) {
     </Dialog>
   );
 }
-
 export default UpdatePatient;

@@ -7,12 +7,14 @@ import {
   Avatar,
   Button
 } from "@material-tailwind/react";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { confirmation } from "@/widgets/alert_confirmation";
 import { UserPlusIcon } from "@heroicons/react/24/outline";
-import { fetchDepartements,deleteDepartement } from '@/services/departement.service';
+import { fetchDepartements, deleteDepartement } from '@/services/departement.service';
 import AddDepartement from "./AddDepartement"; 
 import SweetAlert from 'sweetalert2'; 
 import { UpdateDepartement } from './UpdateDepartement';
+
 export function Departement() {
   const [departements, setDepartements] = useState([]);
   const [DepartementtoUpdate, setDepartementtoUpdate] = useState();
@@ -20,10 +22,13 @@ export function Departement() {
   const [reload, setReload] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [IsDialogupOpen, setIsDialogupOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6; // Nombre d'items par page
+
   useEffect(() => {
     fetchData();
   }, [reload]);
- 
+
   const fetchData = async () => {
     try {
       const response = await fetchDepartements();
@@ -33,13 +38,16 @@ export function Departement() {
       console.error("Error fetching data:", error);
     }
   };
+
   const handleCloseDialogforup = () => {
     setIsDialogupOpen(false);
   };
+
   const handleupdateDepClick = (departement) => {
     setDepartementtoUpdate(departement);
     setIsDialogupOpen(true);
   };
+
   const handleAddDepartementClick = () => {
     setIsDialogOpen(true);
   };
@@ -57,6 +65,24 @@ export function Departement() {
     }
   };
 
+  // Pagination Logic
+  const totalPages = Math.ceil(departements.length / itemsPerPage);
+  const currentDepartements = departements.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
@@ -74,7 +100,7 @@ export function Departement() {
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["Nom", "Description", ""].map((el) => (
+                {["", "Nom", "Description", ""].map((el) => (
                   <th
                     key={el}
                     className="border-b border-blue-gray-50 py-3 px-5 text-left"
@@ -95,8 +121,8 @@ export function Departement() {
                   <td colSpan="3" className="py-3 px-5 text-center">Chargement...</td>
                 </tr>
               ) : (
-                departements.map(({ id_dep, nom, description }, key) => {
-                  const className = `py-3 px-5 ${
+                currentDepartements.map(({ id_dep, nom, description }, key) => {
+                  const className = `py-1 px-3 ${
                     key === departements.length - 1
                       ? ""
                       : "border-b border-blue-gray-50"
@@ -104,6 +130,8 @@ export function Departement() {
 
                   return (
                     <tr key={id_dep}>
+                       <td className={className}><Avatar src={"/img/dep.png"} size="lg" variant="rounded" /></td>
+                      
                       <td className={className}>
                         <Typography
                           variant="small"
@@ -141,15 +169,42 @@ export function Departement() {
               )}
             </tbody>
           </table>
+
+          {/* Pagination Controls */}
+          <div className="flex justify-between items-center mt-4">
+            <Button
+              variant="text"
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+            >
+              <ArrowLeftIcon className="h-5 w-5" /> Précédent
+            </Button>
+            <Typography variant="small" className="text-blue-gray-600">
+              Page {currentPage} sur {totalPages}
+            </Typography>
+            <Button
+              variant="text"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Suivant <ArrowRightIcon className="h-5 w-5" />
+            </Button>
+          </div>
         </CardBody>
       </Card>
+
       <AddDepartement
         open={isDialogOpen}
         handleOpen={() => setIsDialogOpen(false)}
         setReload={fetchData} 
       />
       {IsDialogupOpen && (
-        <UpdateDepartement  open={IsDialogupOpen} departement={DepartementtoUpdate}  setReload={setReload} handleOpen={handleCloseDialogforup} />
+        <UpdateDepartement 
+          open={IsDialogupOpen} 
+          departement={DepartementtoUpdate} 
+          setReload={setReload} 
+          handleOpen={handleCloseDialogforup} 
+        />
       )}
     </div>
   );

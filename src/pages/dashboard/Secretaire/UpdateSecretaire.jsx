@@ -18,7 +18,6 @@ import SweetAlert from 'sweetalert2';
 export function UpdateSecretaire(props) {
   const { secretaire, medecins, open, handleOpen, setReload } = props;
 
-  
   const [formData, setFormData] = useState({
     nom: "",
     prenom: "",
@@ -27,13 +26,12 @@ export function UpdateSecretaire(props) {
     dateNaissance: "",
     email: "",
     Superieurid_medecin: "",
-    password: "",
+    password: "Anas246@",
   });
 
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-   
     if (secretaire && secretaire.utilisateur) {
       setFormData({
         nom: secretaire.utilisateur.nom || "",
@@ -87,10 +85,7 @@ export function UpdateSecretaire(props) {
       newErrors.email = "L'email est requis";
       isValid = false;
     }
-    if (!formData.password) {
-      newErrors.password = "Le mot de passe est requis";
-      isValid = false;
-    }
+  
     if (!formData.Superieurid_medecin) {
       newErrors.Superieurid_medecin = "Le supérieur est requis";
       isValid = false;
@@ -148,12 +143,12 @@ export function UpdateSecretaire(props) {
             </svg>
           </IconButton>
         </div>
-        <CardBody className="flex flex-col gap-4 overflow-y-auto max-h-[70vh]">
+        <CardBody className="flex flex-col gap-3 overflow-y-auto max-h-[70vh]">
           <Typography variant="h4" color="blue-gray" className="text-center text-blue-900">
             Modifier une secrétaire
           </Typography>
           <Typography
-            className="mb-3 font-normal text-center"
+            className="mb-2 font-normal text-center"
             variant="paragraph"
             color="gray"
           >
@@ -167,13 +162,13 @@ export function UpdateSecretaire(props) {
               { name: 'telephone', label: 'Téléphone', type: 'text' },
               { name: 'dateNaissance', label: 'Date de Naissance', type: 'date' },
               { name: 'email', label: 'Email', type: 'email' },
-              { name: 'password', label: 'Mot de Passe', type: 'password' }
+              
             ].map((field, index) => (
-              <div className="my-4" key={index}>
+              <div className="my-2" key={index}>
                 <Typography
                   variant="small"
                   color="blue-gray"
-                  className="mb-2 font-medium"
+                  className="mb-1 font-medium"
                 >
                   {field.label}
                 </Typography>
@@ -189,11 +184,11 @@ export function UpdateSecretaire(props) {
                 {errors[field.name] && <Typography color="red" className="mt-1">{errors[field.name]}</Typography>}
               </div>
             ))}
-            <div className="my-4">
+            <div className="my-2 col-span-1 md:col-span-2">
               <Typography
                 variant="small"
                 color="blue-gray"
-                className="mb-2 font-medium"
+                className="mb-1 font-medium"
               >
                 Supérieur
               </Typography>
@@ -215,11 +210,11 @@ export function UpdateSecretaire(props) {
           </div>
         </CardBody>
         <CardFooter className="pt-0 flex justify-between">
-          <Button fullWidth variant="gradient" onClick={handleOpen}>
+          <Button fullWidth className="bg-blue-900" onClick={handleOpen}>
             Annuler
           </Button>
           <div className="w-4"></div>
-          <Button fullWidth variant="gradient" color="blue" onClick={handleSubmit}>
+          <Button fullWidth className="bg-blue-900" onClick={handleSubmit}>
             Mettre à jour
           </Button>
         </CardFooter>

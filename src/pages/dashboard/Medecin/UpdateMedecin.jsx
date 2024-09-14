@@ -27,7 +27,7 @@ export function UpdateMedecin(props) {
     email: "",
     specialisation: "",
     DepartementID: "",
-    password: "",
+    password: "Anas246@",
   });
 
   const [errors, setErrors] = useState({});
@@ -43,7 +43,7 @@ export function UpdateMedecin(props) {
         email: medecin.utilisateur.email || "",
         specialisation: medecin.specialisation || "",
         DepartementID: medecin.departementID || "",
-        password: "",
+        password: "Anas246@",
       });
     }
   }, [medecin]);
@@ -124,7 +124,7 @@ export function UpdateMedecin(props) {
       handler={handleOpen}
       className="bg-transparent shadow-none"
     >
-      <Card className="mx-auto w-full max-w-[60rem] p-6">
+      <Card className="mx-auto w-full max-w-[60rem] p-4">
         <div className="flex justify-end pe-2 pt-2">
           <IconButton
             size="sm"
@@ -148,18 +148,18 @@ export function UpdateMedecin(props) {
             </svg>
           </IconButton>
         </div>
-        <CardBody className="flex flex-col gap-4 overflow-y-auto max-h-[70vh]">
+        <CardBody className="flex flex-col gap-2 overflow-y-auto max-h-[70vh]">
           <Typography variant="h4" color="blue-gray" className="text-center text-blue-900">
             Modifier un médecin
           </Typography>
           <Typography
-            className="mb-3 font-normal text-center"
+            className="mb-1 font-normal text-center"
             variant="paragraph"
             color="gray"
           >
             Entrer les détails du médecin
           </Typography>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {[
               { name: 'nom', label: 'Nom', type: 'text' },
               { name: 'prenom', label: 'Prénom', type: 'text' },
@@ -168,13 +168,12 @@ export function UpdateMedecin(props) {
               { name: 'dateNaissance', label: 'Date de Naissance', type: 'date' },
               { name: 'email', label: 'Email', type: 'email' },
               { name: 'specialisation', label: 'Spécialisation', type: 'text' },
-              { name: 'password', label: 'Mot de Passe', type: 'password' }
             ].map((field, index) => (
-              <div className="my-4" key={index}>
+              <div className="my-1" key={index}>
                 <Typography
                   variant="small"
                   color="blue-gray"
-                  className="mb-2 font-medium"
+                  className="mb-1 font-medium"
                 >
                   {field.label}
                 </Typography>
@@ -187,14 +186,14 @@ export function UpdateMedecin(props) {
                   onChange={(e) => handleChange(e, field.name)}
                   error={!!errors[field.name]}
                 />
-                {errors[field.name] && <Typography color="red" className="mt-1">{errors[field.name]}</Typography>}
+                {errors[field.name] && <Typography color="red" className="mt-1 text-sm">{errors[field.name]}</Typography>}
               </div>
             ))}
-            <div className="my-4">
+            <div className="my-1 col-span-2 md:col-span-1">
               <Typography
                 variant="small"
                 color="blue-gray"
-                className="mb-2 font-medium"
+                className="mb-1 font-medium"
               >
                 Département
               </Typography>
@@ -204,6 +203,7 @@ export function UpdateMedecin(props) {
                 name="DepartementID"
                 value={formData.DepartementID}
                 error={!!errors.DepartementID}
+                className="w-full"
               >
                 {departements.map((departement, key) => (
                   <Option key={key} value={departement.id_dep}>
@@ -211,16 +211,16 @@ export function UpdateMedecin(props) {
                   </Option>
                 ))}
               </Select>
-              {errors.DepartementID && <Typography color="red" className="mt-1">{errors.DepartementID}</Typography>}
+              {errors.DepartementID && <Typography color="red" className="mt-1 text-sm">{errors.DepartementID}</Typography>}
             </div>
           </div>
         </CardBody>
-        <CardFooter className="pt-0 flex justify-between">
-          <Button fullWidth variant="gradient" onClick={handleOpen}>
+        <CardFooter className="pt-2 flex justify-between">
+          <Button fullWidth className="bg-blue-900" onClick={handleOpen}>
             Annuler
           </Button>
-          <div className="w-4"></div>
-          <Button fullWidth variant="gradient" color="blue" onClick={handleSubmit}>
+          <div className="w-2"></div>
+          <Button fullWidth className="bg-blue-900" onClick={handleSubmit}>
             Mettre à jour
           </Button>
         </CardFooter>

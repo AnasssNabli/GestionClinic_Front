@@ -3,8 +3,9 @@ import { Link, NavLink } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Avatar, Button, IconButton, Typography } from "@material-tailwind/react";
 import { useMaterialTailwindController, setOpenSidenav } from "@/context";
+import routes from "@/routes";  // Import your routes
 
-export function Sidenav({ brandImg, brandName, routes }) {
+export function Sidenav({ brandImg, brandName }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
   const sidenavTypes = {
@@ -12,6 +13,26 @@ export function Sidenav({ brandImg, brandName, routes }) {
     white: "bg-white shadow-sm",
     transparent: "bg-transparent",
   };
+
+  // Get user type from localStorage
+  const userType = localStorage.getItem("type");
+
+  // Define route filters based on user type
+  const routeFilters = {
+    admin: ["dashboard", "profile", "Départements", "Médecins", "Secrétaires", "Patients"],
+    medecin: ["dashboard", "profile", "Patients", "Rendez Vous", "Disponibilite", "Visites"],
+    secretary: ["dashboard", "profile", "Patients", "Rendez Vous", "Disponibilite", "Visites"],
+    patient: ["dashboard", "profile", "Rendez Vous", "Visites"]
+  };
+
+  // Filter routes based on user type
+  const filteredRoutes = routes
+    .filter(route => route.layout !== "auth")
+    .map(route => ({
+      ...route,
+      pages: route.pages.filter(page => routeFilters[userType]?.includes(page.name))
+    }))
+    .filter(route => route.pages.length > 0);
 
   return (
     <aside
@@ -37,32 +58,30 @@ export function Sidenav({ brandImg, brandName, routes }) {
         </IconButton>
       </div>
       <div className="m-4">
-        {routes
-          .filter((route) => route.layout !== "auth")
-          .map(({ layout, title, pages }, key) => (
-            <ul key={key} className="mb-4 flex flex-col gap-1">
-              {pages.map(({ icon, name, path }) => (
-                <li key={name}>
-                  <NavLink to={`/${layout}${path}`}>
-                    {({ isActive }) => (
-                      <Button
-                        variant={isActive ? "filled" : "text"}
-                        className={`flex items-center gap-4 px-4 capitalize ${
-                          isActive ? "bg-blue-900 text-white" : "text-blue-900"
-                        }`}
-                        fullWidth
-                      >
-                        {icon}
-                        <Typography color="inherit" className="font-medium capitalize">
-                          {name}
-                        </Typography>
-                      </Button>
-                    )}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          ))}
+        {filteredRoutes.map(({ layout, title, pages }, key) => (
+          <ul key={key} className="mb-4 flex flex-col gap-1">
+            {pages.map(({ icon, name, path }) => (
+              <li key={name}>
+                <NavLink to={`/${layout}${path}`}>
+                  {({ isActive }) => (
+                    <Button
+                      variant={isActive ? "filled" : "text"}
+                      className={`flex items-center gap-4 px-4 capitalize ${
+                        isActive ? "bg-blue-900 text-white" : "text-blue-900"
+                      }`}
+                      fullWidth
+                    >
+                      {icon}
+                      <Typography color="inherit" className="font-medium capitalize">
+                        {name}
+                      </Typography>
+                    </Button>
+                  )}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        ))}
       </div>
     </aside>
   );
@@ -76,9 +95,8 @@ Sidenav.defaultProps = {
 Sidenav.propTypes = {
   brandImg: PropTypes.string,
   brandName: PropTypes.string,
-  routes: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-Sidenav.displayName = "/src/widgets/layout/sidnave.jsx";
+Sidenav.displayName = "/src/widgets/layout/sidenav.jsx";
 
 export default Sidenav;

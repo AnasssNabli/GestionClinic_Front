@@ -46,7 +46,7 @@ export function Rendezvous() {
     const confirmer = await confirmation();
     if (confirmer) {
       try {
-        const statut = "Annule";
+        const statut = "Annulé";
         await updateRendezVousStatut(id, statut);
         fetchData();
       } catch (error) {

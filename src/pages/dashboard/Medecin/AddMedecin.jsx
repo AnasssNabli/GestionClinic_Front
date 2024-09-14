@@ -13,10 +13,11 @@ import {
 } from "@material-tailwind/react";
 import { confirmation } from "@/widgets/alert_confirmation";
 import { register2 } from "@/services/login.service";
-import SweetAlert from 'sweetalert2'; 
-export function AddMedecin(props) {
+import SweetAlert from 'sweetalert2';
+
+export default function AddMedecin(props) {
   const [formData, setFormData] = useState({
-    "type" : "medecin" , 
+    type: "medecin",
     nom: "",
     prenom: "",
     cin: "",
@@ -24,7 +25,8 @@ export function AddMedecin(props) {
     dateNaissance: "",
     email: "",
     specialisation: "",
-    password: "",  
+    password: "",
+    DepartementID: "" // Include this field to manage department selection
   });
 
   const [errors, setErrors] = useState({});
@@ -77,7 +79,7 @@ export function AddMedecin(props) {
       newErrors.specialisation = "La spécialisation est requise";
       isValid = false;
     }
-    if (!formData.password) {  
+    if (!formData.password) {
       newErrors.password = "Le mot de passe est requis";
       isValid = false;
     } else if (passwordError) {
@@ -89,20 +91,32 @@ export function AddMedecin(props) {
     return isValid;
   };
 
-
   const handleSelectChange = (value) => {
     setFormData({ ...formData, DepartementID: value });
   };
-  
+
   const handleSubmit = async () => {
     if (validateForm()) {
       let confirmer = await confirmation();
       if (confirmer) {
         try {
           await register2(formData);
-          props.setReload(formData); 
-          props.handleOpen(); 
-          SweetAlert.fire("Bravo", "Médecin  ajouté avec succès .", "success");
+          props.setReload(formData);
+          props.handleOpen();
+          SweetAlert.fire("Bravo", "Médecin ajouté avec succès.", "success");
+          // Clear form data except for the department selection
+          setFormData({
+            type: "medecin",
+            nom: "",
+            prenom: "",
+            cin: "",
+            telephone: "",
+            dateNaissance: "",
+            email: "",
+            specialisation: "",
+            password: "",
+            DepartementID: formData.DepartementID // Keep the selected department
+          });
           console.log("Médecin ajouté avec succès !");
         } catch (error) {
           console.error("Erreur lors de l'ajout du médecin :", error);
@@ -215,6 +229,7 @@ export function AddMedecin(props) {
                 error={!!errors.departement}
                 label="Département"
                 onChange={(e) => handleSelectChange(e)}
+                value={formData.DepartementID}
                 name="departement"
               >
                 {props.departements.map(departement => (
@@ -228,7 +243,6 @@ export function AddMedecin(props) {
                   {errors.departement}
                 </Typography>
               )}
-
             </div>
           </div>
           <div className="my-2 flex flex-wrap gap-4">
@@ -284,12 +298,12 @@ export function AddMedecin(props) {
                 color="blue-gray"
                 className="mb-2 font-medium"
               >
-                Date de Naissance
+                Date de naissance
               </Typography>
               <Input
                 type="date"
                 name="dateNaissance"
-                label="Date de Naissance"
+                label="Date de naissance"
                 size="lg"
                 value={formData.dateNaissance}
                 onChange={(e) => handleChange(e, "dateNaissance")}
@@ -331,6 +345,28 @@ export function AddMedecin(props) {
                 color="blue-gray"
                 className="mb-2 font-medium"
               >
+                Spécialisation
+              </Typography>
+              <Input
+                name="specialisation"
+                label="Spécialisation"
+                size="lg"
+                value={formData.specialisation}
+                onChange={(e) => handleChange(e, "specialisation")}
+                error={!!errors.specialisation}
+              />
+              {errors.specialisation && (
+                <Typography color="red" className="mt-1">
+                  {errors.specialisation}
+                </Typography>
+              )}
+            </div>
+            <div className="flex-1 min-w-[200px]">
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-2 font-medium"
+              >
                 Mot de passe
               </Typography>
               <Input
@@ -348,37 +384,10 @@ export function AddMedecin(props) {
                 </Typography>
               )}
             </div>
-            <div className="flex-1 min-w-[200px]">
-              <Typography
-                variant="small"
-                color="blue-gray"
-                className="mb-2 font-medium"
-              >
-                Spécialisation
-              </Typography>
-              <Input
-                name="specialisation"
-                label="Spécialisation"
-                size="lg"
-                value={formData.specialisation}
-                onChange={(e) => handleChange(e, "specialisation")}
-                error={!!errors.specialisation}
-              />
-              {errors.specialisation && (
-                <Typography color="red" className="mt-1">
-                  {errors.specialisation}
-                </Typography>
-              )}
-            </div>
           </div>
-         
         </CardBody>
-        <CardFooter className="pt-0 flex justify-between">
-          <Button fullWidth variant="gradient" onClick={props.handleOpen}>
-            Annuler
-          </Button>
-          <div className="w-4"></div>
-          <Button fullWidth variant="gradient" color="blue" onClick={handleSubmit}>
+        <CardFooter className="pt-0">
+          <Button onClick={handleSubmit} className="bg-blue-900" fullWidth>
             Ajouter
           </Button>
         </CardFooter>
@@ -386,7 +395,3 @@ export function AddMedecin(props) {
     </Dialog>
   );
 }
-
-AddMedecin.displayName = "/src/widgets/layout/AddMedecin.jsx";
-
-export default AddMedecin;

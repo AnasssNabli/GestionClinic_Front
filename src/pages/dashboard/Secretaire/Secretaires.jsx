@@ -7,6 +7,7 @@ import {
   Avatar,
   Button
 } from "@material-tailwind/react";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { confirmation } from "@/widgets/alert_confirmation";
 import { UserPlusIcon } from "@heroicons/react/24/outline";
 import { fetchSecretaires, deleteSecretaire } from "@/services/secretaires.service";
@@ -22,6 +23,8 @@ export function Secretaires() {
   const [isDialogupOpen, setIsDialogupOpen] = useState(false);
   const [medecins, setMedecins] = useState([]);
   const [secretaireToUpdate, setSecretaireToUpdate] = useState(null); 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6; // Number of items per page
 
   useEffect(() => {
     fetchData();
@@ -60,6 +63,25 @@ export function Secretaires() {
     setIsDialogupOpen(false);
   };
 
+  // Pagination Logic
+  const totalPages = Math.ceil(secretaires.length / itemsPerPage);
+  const currentSecretaires = secretaires.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
@@ -73,7 +95,7 @@ export function Secretaires() {
         </CardHeader>
     
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-          <table className="w-full min-w-[640px] table-auto">
+        <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
                 {["Nom", "Email", "Téléphone", , "CIN", "Supérieur", ""].map((el) => (
@@ -170,15 +192,37 @@ export function Secretaires() {
               )}
             </tbody>
           </table>
+
+          {/* Pagination Controls */}
+          <div className="flex justify-between items-center mt-4">
+            <Button
+              variant="text"
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+            >
+              <ArrowLeftIcon className="h-5 w-5" /> Previous
+            </Button>
+            <Typography variant="small" className="text-blue-gray-600">
+              Page {currentPage} sur {totalPages}
+            </Typography>
+            <Button
+              variant="text"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next <ArrowRightIcon className="h-5 w-5" />
+            </Button>
+          </div>
         </CardBody>
       </Card>
+
       <AddSecretaire
         open={isDialogOpen}
         handleOpen={() => setIsDialogOpen(false)}
         setReload={fetchData}
         medecins={medecins}
       />
-      
+
       {isDialogupOpen && (
         <UpdateSecretaire
           open={isDialogupOpen}

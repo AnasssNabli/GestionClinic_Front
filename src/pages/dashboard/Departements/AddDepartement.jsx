@@ -46,6 +46,13 @@ export function AddDepartement(props) {
           await createDepartement(formData);
           props.setReload(formData); 
           props.handleOpen(); 
+          
+          // Reset form data after successful submission
+          setFormData({
+            nom: "",
+            description: "",
+          });
+
           console.log("Département ajouté avec succès !");
         } catch (error) {
           console.error("Erreur lors de l'ajout du département :", error);
@@ -141,11 +148,11 @@ export function AddDepartement(props) {
           </div>
         </CardBody>
         <CardFooter className="pt-0 flex justify-between">
-          <Button fullWidth variant="gradient" onClick={props.handleOpen}>
+          <Button fullWidth className="bg-blue-900" onClick={props.handleOpen}>
             Annuler
           </Button>
           <div className="w-4"></div>
-          <Button fullWidth variant="gradient" color="blue" onClick={handleSubmit}>
+          <Button fullWidth className="bg-blue-900" onClick={handleSubmit}>
             Ajouter
           </Button>
         </CardFooter>

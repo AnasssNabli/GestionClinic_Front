@@ -12,11 +12,11 @@ import {
   Option
 } from "@material-tailwind/react";
 import { confirmation } from "@/widgets/alert_confirmation";
-import { createSecretaire } from "@/services/secretaires.service";
 import { register2 } from "@/services/login.service";
 import SweetAlert from 'sweetalert2'; 
+
 export function AddSecretaire(props) {
-  const { open, handleOpen, setReload } = props;
+  const { open, handleOpen, setReload, medecins } = props;
 
   const [formData, setFormData] = useState({
     type: "secretary",
@@ -82,10 +82,23 @@ export function AddSecretaire(props) {
           setReload(formData);
           handleOpen();
           SweetAlert.fire("Bravo", "Secrétaire ajouté avec succès.", "success");
+          
+          // Reset form data after successful submission
+          setFormData({
+            type: "secretary",
+            nom: "",
+            prenom: "",
+            cin: "",
+            telephone: "",
+            dateNaissance: "",
+            email: "",
+            Superieurid_medecin: "",
+            password: "",
+          });
+
           console.log("Secrétaire ajouté avec succès !");
         } catch (error) {
-         SweetAlert.fire("Erreur", "Une erreur s'est produite lors de la suppression du secrétaire.", "error");
-          
+          SweetAlert.fire("Erreur", "Une erreur s'est produite lors de l'ajout' du secrétaire.", "error");
         }
       } else {
         handleOpen();
@@ -106,7 +119,7 @@ export function AddSecretaire(props) {
   };
 
   const handleSelectChange = (value) => {
-     setFormData({ ...formData, Superieurid_medecin: value });
+    setFormData({ ...formData, Superieurid_medecin: value });
   };
 
   return (
@@ -150,7 +163,7 @@ export function AddSecretaire(props) {
           >
             Entrer les détails d'une secrétaire
           </Typography>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2"> {/* Adjusted gap */}
             {[
               { name: 'nom', label: 'Nom', type: 'text' },
               { name: 'prenom', label: 'Prénom', type: 'text' },
@@ -160,7 +173,7 @@ export function AddSecretaire(props) {
               { name: 'email', label: 'Email', type: 'email' },
               { name: 'password', label: 'Mot de Passe', type: 'password' }
             ].map((field, index) => (
-              <div className="my-4" key={index}>
+              <div className="my-2" key={index}> {/* Adjusted margin */}
                 <Typography
                   variant="small"
                   color="blue-gray"
@@ -180,7 +193,7 @@ export function AddSecretaire(props) {
                 {errors[field.name] && <Typography color="red" className="mt-1">{errors[field.name]}</Typography>}
               </div>
             ))}
-            <div className="my-4">
+            <div className="my-2"> {/* Adjusted margin */}
               <Typography
                 variant="small"
                 color="blue-gray"
@@ -188,29 +201,28 @@ export function AddSecretaire(props) {
               >
                 Supérieur
               </Typography>
-              
               <Select
-              label="Supérieur"
-              onChange={(e) => handleSelectChange(e)}
-              name="Superieurid_medecin"
-              error={!!errors.Superieurid_medecin}
-            >
-            {props.medecins.map((medecin, key) => (
-                <Option key={key} value={medecin.id_medecin.toString()}>
-                  {medecin.utilisateur.nom} {medecin.utilisateur.prenom}
-                </Option>
-              ))}
-            </Select>
-            {errors.Superieurid_medecin && <Typography color="red" className="mt-1">{errors.Superieurid_medecin}</Typography>}
+                label="Supérieur"
+                onChange={(e) => handleSelectChange(e)}
+                name="Superieurid_medecin"
+                error={!!errors.Superieurid_medecin}
+              >
+                {medecins.map((medecin, key) => (
+                  <Option key={key} value={medecin.id_medecin.toString()}>
+                    {medecin.utilisateur.nom} {medecin.utilisateur.prenom}
+                  </Option>
+                ))}
+              </Select>
+              {errors.Superieurid_medecin && <Typography color="red" className="mt-1">{errors.Superieurid_medecin}</Typography>}
             </div>
           </div>
         </CardBody>
         <CardFooter className="pt-0 flex justify-between">
-          <Button fullWidth variant="gradient" onClick={handleOpen}>
+          <Button fullWidth className="bg-blue-900" onClick={handleOpen}>
             Annuler
           </Button>
           <div className="w-4"></div>
-          <Button fullWidth variant="gradient" color="blue" onClick={handleSubmit}>
+          <Button fullWidth className="bg-blue-900" onClick={handleSubmit}>
             Ajouter
           </Button>
         </CardFooter>

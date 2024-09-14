@@ -1,220 +1,358 @@
 import {
   Card,
   CardBody,
-  CardHeader,
-  CardFooter,
   Avatar,
   Typography,
-  Tabs,
-  TabsHeader,
-  Tab,
-  Switch,
-  Tooltip,
   Button,
+  Input,
 } from "@material-tailwind/react";
-import {
-  HomeIcon,
-  ChatBubbleLeftEllipsisIcon,
-  Cog6ToothIcon,
-  PencilIcon,
-} from "@heroicons/react/24/solid";
-import { Link } from "react-router-dom";
-import { ProfileInfoCard, MessageCard } from "@/widgets/cards";
-import { platformSettingsData, conversationsData, projectsData } from "@/data";
+import { Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { fetchUserData, UpdateUserData } from "@/services/profil.service";
+import SweetAlert from 'sweetalert2';
+import { confirmation } from "@/widgets/alert_confirmation";
 
 export function Profile() {
+  const [formData, setFormData] = useState({
+    id: "",
+    prenom: "",
+    nom: "",
+    cin: "",
+    email: "",
+    dateNaissance: "",
+    telephone: "",
+    oldPassword: "",
+    newPassword: "", // Modifié pour correspondre au back-end
+    confirmPassword: "",
+  });
+
+  const [errors, setErrors] = useState({
+    prenom: "",
+    nom: "",
+    cin: "",
+    email: "",
+    dateNaissance: "",
+    telephone: "",
+    oldPassword: "",
+    newPassword: "", // Modifié pour correspondre au back-end
+    confirmPassword: "",
+  });
+
+  const [passwordError, setPasswordError] = useState("");
+
+  const fetchInfo = async () => {
+    try {
+      const res = await fetchUserData();
+      const userData = res.data;
+      setFormData({
+        id: userData.id,
+        prenom: userData.prenom,
+        nom: userData.nom,
+        cin: userData.cin,
+        email: userData.email,
+        dateNaissance: userData.dateNaissance,
+        telephone: userData.telephone,
+        oldPassword: "",
+        newPassword: "", // Modifié pour correspondre au back-end
+        confirmPassword: "",
+      });
+    } catch (error) {
+      console.error("Erreur lors de la récupération des informations utilisateur", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchInfo();
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
+    setErrors((prevState) => ({ ...prevState, [name]: "" }));
+  };
+
+  const validatePassword = () => {
+    const { newPassword, confirmPassword } = formData;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (newPassword && !passwordRegex.test(newPassword)) {
+      setPasswordError(
+        "Le mot de passe doit comporter au moins 8 caractères, inclure des majuscules, des minuscules, un chiffre et un caractère spécial."
+      );
+      return false;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Les mots de passe ne correspondent pas.");
+      return false;
+    }
+
+    setPasswordError("");
+    return true;
+  };
+
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = { ...errors };
+
+    // Validation des champs requis
+    for (const key in formData) {
+      if (formData[key] === "" && key !== "oldPassword" && key !== "newPassword" && key !== "confirmPassword") {
+        newErrors[key] = "Ce champ est requis.";
+        valid = false;
+      }
+    }
+
+    // Validation de l'email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.email && !emailRegex.test(formData.email)) {
+      newErrors.email = "Adresse email invalide.";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+
+    // Validation du mot de passe
+    if (formData.newPassword || formData.confirmPassword) {
+      if (!validatePassword()) {
+        valid = false;
+      }
+    }
+
+    return valid;
+  };
+
+  const handleSubmit = async () => {
+    if (validateForm()) {
+      const confirmer = await confirmation();
+      if (confirmer) {
+        try {
+          const id = formData.id;
+          await UpdateUserData(id, formData);
+
+          SweetAlert.fire("Bravo", "Profil mis à jour avec succès", "success");
+        } catch (error) {
+          Swal.fire("Erreur", "Une erreur s'est produite lors de la mise à jour du profil.", "error");
+        }
+      } else {
+        console.log('erreur de validation du formulaire');
+      }
+    }
+  };
+
   return (
-    <>
-      <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cover	bg-center">
-        <div className="absolute inset-0 h-full w-full bg-gray-900/75" />
-      </div>
-      <Card className="mx-3 -mt-16 mb-6 lg:mx-4 border border-blue-gray-100">
-        <CardBody className="p-4">
-          <div className="mb-10 flex items-center justify-between flex-wrap gap-6">
+    <div className="container mx-auto p-8">
+      <Card className="max-w-5xl mx-auto shadow-2xl rounded-lg p-10 transition-transform transform hover:scale-105 duration-500">
+        <CardBody>
+          {/* Photo de profil et boutons */}
+          <div className="flex items-center justify-between pb-8 border-b border-gray-300">
             <div className="flex items-center gap-6">
               <Avatar
-                src="/img/bruce-mars.jpeg"
-                alt="bruce-mars"
+                src="/img/user.png"
+                alt="Photo de profil"
                 size="xl"
                 variant="rounded"
-                className="rounded-lg shadow-lg shadow-blue-gray-500/40"
+                className="shadow-lg"
               />
               <div>
-                <Typography variant="h5" color="blue-gray" className="mb-1">
-                  Richard Davis
+                <Typography variant="h4" className="font-bold text-gray-900">
+                  {formData.prenom} {formData.nom}
                 </Typography>
-                <Typography
-                  variant="small"
-                  className="font-normal text-blue-gray-600"
-                >
-                  CEO / Co-Founder
+                <Typography variant="small" className="text-gray-500">
+                  {formData.email}
                 </Typography>
               </div>
             </div>
-            <div className="w-96">
-              <Tabs value="app">
-                <TabsHeader>
-                  <Tab value="app">
-                    <HomeIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
-                    App
-                  </Tab>
-                  <Tab value="message">
-                    <ChatBubbleLeftEllipsisIcon className="-mt-0.5 mr-2 inline-block h-5 w-5" />
-                    Message
-                  </Tab>
-                  <Tab value="settings">
-                    <Cog6ToothIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
-                    Settings
-                  </Tab>
-                </TabsHeader>
-              </Tabs>
-            </div>
-          </div>
-          <div className="gird-cols-1 mb-12 grid gap-12 px-4 lg:grid-cols-2 xl:grid-cols-3">
-            <div>
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Platform Settings
-              </Typography>
-              <div className="flex flex-col gap-12">
-                {platformSettingsData.map(({ title, options }) => (
-                  <div key={title}>
-                    <Typography className="mb-4 block text-xs font-semibold uppercase text-blue-gray-500">
-                      {title}
-                    </Typography>
-                    <div className="flex flex-col gap-6">
-                      {options.map(({ checked, label }) => (
-                        <Switch
-                          key={label}
-                          id={label}
-                          label={label}
-                          defaultChecked={checked}
-                          labelProps={{
-                            className: "text-sm font-normal text-blue-gray-500",
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <ProfileInfoCard
-              title="Profile Information"
-              description="Hi, I'm Alec Thompson, Decisions: If you can't decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
-              details={{
-                "first name": "Alec M. Thompson",
-                mobile: "(44) 123 1234 123",
-                email: "alecthompson@mail.com",
-                location: "USA",
-                social: (
-                  <div className="flex items-center gap-4">
-                    <i className="fa-brands fa-facebook text-blue-700" />
-                    <i className="fa-brands fa-twitter text-blue-400" />
-                    <i className="fa-brands fa-instagram text-purple-500" />
-                  </div>
-                ),
-              }}
-              action={
-                <Tooltip content="Edit Profile">
-                  <PencilIcon className="h-4 w-4 cursor-pointer text-blue-gray-500" />
-                </Tooltip>
-              }
-            />
-            <div>
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Platform Settings
-              </Typography>
-              <ul className="flex flex-col gap-6">
-                {conversationsData.map((props) => (
-                  <MessageCard
-                    key={props.name}
-                    {...props}
-                    action={
-                      <Button variant="text" size="sm">
-                        reply
-                      </Button>
-                    }
-                  />
-                ))}
-              </ul>
-            </div>
-          </div>
-          <div className="px-4 pb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-2">
-              Projects
-            </Typography>
-            <Typography
-              variant="small"
-              className="font-normal text-blue-gray-500"
+            <div className="flex gap-4">
+            <Link to="/home" className="inline-block">
+            <Button
+              size="sm"
+              color="blue"
+              className="transition duration-300 transform hover:scale-110 hover:bg-blue-900"
             >
-              Architects design houses
-            </Typography>
-            <div className="mt-6 grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-4">
-              {projectsData.map(
-                ({ img, title, description, tag, route, members }) => (
-                  <Card key={title} color="transparent" shadow={false}>
-                    <CardHeader
-                      floated={false}
-                      color="gray"
-                      className="mx-0 mt-0 mb-4 h-64 xl:h-40"
-                    >
-                      <img
-                        src={img}
-                        alt={title}
-                        className="h-full w-full object-cover"
-                      />
-                    </CardHeader>
-                    <CardBody className="py-0 px-1">
-                      <Typography
-                        variant="small"
-                        className="font-normal text-blue-gray-500"
-                      >
-                        {tag}
-                      </Typography>
-                      <Typography
-                        variant="h5"
-                        color="blue-gray"
-                        className="mt-1 mb-2"
-                      >
-                        {title}
-                      </Typography>
-                      <Typography
-                        variant="small"
-                        className="font-normal text-blue-gray-500"
-                      >
-                        {description}
-                      </Typography>
-                    </CardBody>
-                    <CardFooter className="mt-6 flex items-center justify-between py-0 px-1">
-                      <Link to={route}>
-                        <Button variant="outlined" size="sm">
-                          view project
-                        </Button>
-                      </Link>
-                      <div>
-                        {members.map(({ img, name }, key) => (
-                          <Tooltip key={name} content={name}>
-                            <Avatar
-                              src={img}
-                              alt={name}
-                              size="xs"
-                              variant="circular"
-                              className={`cursor-pointer border-2 border-white ${
-                                key === 0 ? "" : "-ml-2.5"
-                              }`}
-                            />
-                          </Tooltip>
-                        ))}
-                      </div>
-                    </CardFooter>
-                  </Card>
-                )
+              Retour
+            </Button>
+          </Link>
+            </div>
+          </div>
+
+          {/* Section Formulaire */}
+          <Typography variant="h6" className="font-bold mt-3">
+            Les informations générales
+          </Typography>
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 pb-8 border-b border-gray-300">
+            {/* Première colonne */}
+            <div className="space-y-4">
+              <Input
+                label="Prénom"
+                name="prenom"
+                value={formData.prenom}
+                onChange={handleInputChange}
+                className="focus:ring focus:ring-blue-500 rounded-lg shadow-md transition-all duration-300"
+              />
+              {errors.prenom && (
+                <Typography variant="small" className="text-red-500">
+                  {errors.prenom}
+                </Typography>
+              )}
+              <Input
+                label="Nom"
+                name="nom"
+                value={formData.nom}
+                onChange={handleInputChange}
+                className="focus:ring focus:ring-blue-500 rounded-lg shadow-md transition-all duration-300"
+              />
+              {errors.nom && (
+                <Typography variant="small" className="text-red-500">
+                  {errors.nom}
+                </Typography>
+              )}
+              <Input
+                label="Numéro de téléphone"
+                name="telephone"
+                value={formData.telephone}
+                onChange={handleInputChange}
+                className="focus:ring focus:ring-blue-500 rounded-lg shadow-md transition-all duration-300"
+              />
+              {errors.telephone && (
+                <Typography variant="small" className="text-red-500">
+                  {errors.telephone}
+                </Typography>
+              )}
+            </div>
+
+            {/* Deuxième colonne */}
+            <div className="space-y-4">
+              <Input
+                label="Email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="focus:ring focus:ring-blue-500 rounded-lg shadow-md transition-all duration-300"
+              />
+              {errors.email && (
+                <Typography variant="small" className="text-red-500">
+                  {errors.email}
+                </Typography>
+              )}
+              <Input
+                label="Date de naissance"
+                type="date"
+                name="dateNaissance"
+                value={formData.dateNaissance}
+                onChange={handleInputChange}
+                className="focus:ring focus:ring-blue-500 rounded-lg shadow-md transition-all duration-300"
+              />
+              {errors.dateNaissance && (
+                <Typography variant="small" className="text-red-500">
+                  {errors.dateNaissance}
+                </Typography>
+              )}
+              <Input
+                label="Cin"
+                name="cin"
+                value={formData.cin}
+                onChange={handleInputChange}
+                className="focus:ring focus:ring-blue-500 rounded-lg shadow-md transition-all duration-300"
+              />
+              {errors.cin && (
+                <Typography variant="small" className="text-red-500">
+                  {errors.cin}
+                </Typography>
               )}
             </div>
           </div>
+
+          {/* Section Comptes sociaux */}
+          <div className="mt-8 space-y-4 pb-8 border-b border-gray-300">
+            <Typography variant="h6" className="font-bold">
+              Comptes sociaux
+            </Typography>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex items-center justify-between">
+                <Typography>Compte Facebook</Typography>
+                <Button size="sm" color="blue" className="transition duration-300 transform hover:scale-110">
+                  Se connecter
+                </Button>
+              </div>
+              <div className="flex items-center justify-between">
+                <Typography>Compte Twitter</Typography>
+                <Button size="sm" color="blue" className="transition duration-300 transform hover:scale-110">
+                  Se connecter
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          
+          {/* Section Changement de mot de passe */}
+          <div className="mt-8 space-y-4 pb-8 border-b border-gray-300">
+          <Typography variant="h6" className="font-bold">
+            Changement de mot de passe
+          </Typography>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              label="Ancien mot de passe"
+              type="password"
+              name="oldPassword"
+              value={formData.oldPassword}
+              onChange={handleInputChange}
+              className="focus:ring focus:ring-blue-500 rounded-lg shadow-md transition-all duration-300"
+            />
+            {errors.oldPassword && (
+              <Typography variant="small" className="text-red-500">
+                {errors.oldPassword}
+              </Typography>
+            )}
+            <Input
+              label="Nouveau mot de passe"
+              type="password"
+              name="newPassword"
+              value={formData.newPassword}
+              onChange={handleInputChange}
+              className="focus:ring focus:ring-blue-500 rounded-lg shadow-md transition-all duration-300"
+            />
+            {errors.newPassword && (
+              <Typography variant="small" className="text-red-500">
+                {errors.newPassword}
+              </Typography>
+            )}
+            <Input
+              label="Confirmer le nouveau mot de passe"
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              className="focus:ring focus:ring-blue-500 rounded-lg shadow-md transition-all duration-300"
+            />
+            {errors.confirmPassword && (
+              <Typography variant="small" className="text-red-500">
+                {errors.confirmPassword}
+              </Typography>
+            )}
+          </div>
+          {passwordError && (
+            <Typography variant="small" className="text-red-500">
+              {passwordError}
+            </Typography>
+          )}
+          </div>
+
+
+          {/* Bouton de soumission */}
+          <div className="float-right mt-6">
+            <Button
+              size="md"
+              color="green"
+              onClick={handleSubmit}
+              className="transition duration-300 transform hover:scale-110"
+            >
+             Sauvegarder les modifications
+            </Button>
+          </div>
         </CardBody>
       </Card>
-    </>
+    </div>
   );
 }
 

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { fetchRendezVouss, updateRendezVousStatut } from '@/services/rendezvous.service';
 import { IconButton } from "@material-tailwind/react";
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
+import RendezVousDetails from './RendezVousdetails';
 
 function generateWeeks(year, month) {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -21,19 +22,27 @@ function generateWeeks(year, month) {
 
 function RendezVous() {
     const [appointments, setAppointments] = useState({});
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+    const [reload, setReload] = useState(true); // Add reload state
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth();
     const weeks = generateWeeks(year, month);
 
     useEffect(() => {
-        const fetchData = async () => {
+        fetchData();
+    }, [reload]); // Depend on reload state
+
+    const fetchData = async () => {
+        try {
             const data = await fetchRendezVouss();
             setAppointments(data);
-        };
-
-        fetchData();
-    }, []);
+            setReload(false); // Reset reload state after fetching data
+        } catch (error) {
+            console.error('Error fetching appointments:', error);
+        }
+    };
 
     const handleCancelAppointment = (dateKey, timeSlot) => {
         Swal.fire({
@@ -48,32 +57,32 @@ function RendezVous() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const appointmentId = appointments[dateKey][timeSlot].id; // Récupérer l'ID du rendez-vous
+                    const appointmentId = appointments[dateKey][timeSlot].id;
                     await updateRendezVousStatut(appointmentId, 'Annulé');
-                    Swal.fire(
-                        'Annulé !',
-                        'Le rendez-vous a été annulé avec succès.',
-                        'success'
-                    );
-                    // Actualiser les rendez-vous ou supprimer celui qui a été annulé de l'état
-                    const updatedAppointments = { ...appointments };
-                    delete updatedAppointments[dateKey][timeSlot];
-                    setAppointments(updatedAppointments);
+                    Swal.fire('Annulé !', 'Le rendez-vous a été annulé avec succès.', 'success');
+                    setReload(true); // Trigger reload
                 } catch (error) {
-                    console.error("Échec de l'annulation du rendez-vous", error);
-                    Swal.fire(
-                        'Erreur !',
-                        "Une erreur s'est produite lors de l'annulation du rendez-vous. Veuillez réessayer plus tard.",
-                        'error'
-                    );
+                    Swal.fire('Erreur !', "Une erreur s'est produite lors de l'annulation du rendez-vous.", 'error');
                 }
             }
         });
     };
-    
+
+    const handleSelectAppointment = (dateKey, timeSlot) => {
+        setSelectedAppointment(appointments[dateKey][timeSlot]);
+        setIsDetailsDialogOpen(true); // Open the details dialog
+    };
+
+    const handleCloseDetails = () => {
+        setIsDetailsDialogOpen(false);
+        setSelectedAppointment(null);
+    };
 
     const formatAppointmentText = (appointment, timeSlot) => {
-        const lastName = appointment.name.split(' ')[0];
+        if (!appointment || !appointment.patientName) {
+            return `Unknown ${timeSlot}`; 
+        }
+        const lastName = appointment.patientName.split(' ')[0];
         return `${lastName} ${timeSlot}`;
     };
 
@@ -116,6 +125,7 @@ function RendezVous() {
                                                             <div
                                                                 key={index}
                                                                 className="event bg-purple-400 text-white rounded p-1 text-sm mb-1 flex items-center justify-between"
+                                                                onClick={() => handleSelectAppointment(dateKey, timeSlot)}
                                                                 style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}
                                                             >
                                                                 <span className="event-name ml-2 mx-auto">
@@ -124,7 +134,7 @@ function RendezVous() {
                                                                 <IconButton
                                                                     size="sm"
                                                                     variant="text"
-                                                                    onClick={() => handleCancelAppointment(dateKey, timeSlot)}
+                                                                    onClick={(e) => { e.stopPropagation(); handleCancelAppointment(dateKey, timeSlot); }}
                                                                     className="ml-auto bg-dark"
                                                                 >
                                                                     <svg
@@ -166,6 +176,14 @@ function RendezVous() {
                     </tbody>
                 </table>
             </div>
+
+            {isDetailsDialogOpen && (
+                <RendezVousDetails
+                    appointment={selectedAppointment}
+                    handleClose={handleCloseDetails} // Pass the close function
+                    setReload={setReload} // Pass the setReload function
+                />
+            )}
         </div>
     );
 }

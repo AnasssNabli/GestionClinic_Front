@@ -15,6 +15,7 @@ import { Secretaires } from "./pages/dashboard/Secretaire/Secretaires";
 import Patients from "./pages/dashboard/Patients/Patients";
 import {Disponibilite} from "./pages/dashboard/Disponibilite/disponibilite";
 import RendezVousMain from "./pages/dashboard/RendezVous/Rendezvousmain";
+import Visite from "./pages/dashboard/Visites/Visite";
 const icon = {
   className: "w-5 h-5 text-inherit",
 };
@@ -70,6 +71,12 @@ export const routes = [
         name: "Disponibilite",
         path: "/Disponibilite",
         element: <Disponibilite />,
+      }  ,
+      {
+        icon: <TableCellsIcon {...icon} />,
+        name: "Visites",
+        path: "/Visite",
+        element: <Visite />,
       }  
     ],
   },

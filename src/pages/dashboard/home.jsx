@@ -12,7 +12,7 @@ const HeartHealthCarousel = () => {
       title: "Vue d'Ensemble de la Santé Cardiaque",
       description: "Maintenir une bonne santé cardiaque est essentiel pour la longévité.",
       extraInfo: "SpO2 97%, Battements cardiaques réguliers",
-      img: "/img/santé.jpg",
+      img: "/img/sante.jpg",
     },
     {
       id: 2,
@@ -66,11 +66,11 @@ const HeartHealthCarousel = () => {
             className="w-full flex-shrink-0 bg-white shadow-lg rounded-2xl p-6"
             style={{ minWidth: "100%" }}
           >
-            <div className="relative w-full h-96"> {/* Set a fixed height here */}
+            <div className="relative w-full" style={{ height: "24rem" }}>
               <img
                 src={slide.img}
                 alt={slide.title}
-                className="object-cover w-full h-full rounded-2xl" // Ensure full width and cover
+                className="object-cover w-1000 h-full rounded-2xl" // Ensure full width and cover
               />
             </div>
             <div className="mt-4 text-blue-900">
@@ -107,27 +107,27 @@ const DoctorCarousel = () => {
   const doctors = [
     {
       id: 1,
-      name: "Dr. Jean Dupont",
-      speciality: "Cardiologue",
-      img: "/path/to/doctor1-image.png",
+      name: "Dr. Dexter Morgan",
+      speciality: "Blood Spatter",
+      img: "/img/dex2.jpg",
     },
     {
       id: 2,
-      name: "Dr. Marie Dubois",
+      name: "Dr. Tazi Ali",
       speciality: "Neurologue",
-      img: "/path/to/doctor2-image.png",
+      img: "/img/seasmoke.jpg",
     },
     {
       id: 3,
-      name: "Dr. Alain Durand",
+      name: "Dr. Debra Morgan",
       speciality: "Pédiatre",
-      img: "/path/to/doctor3-image.png",
+      img: "/img/syrax.jpg",
     },
     {
       id: 4,
-      name: "Dr. Sophie Martin",
+      name: "Dr. Maria Laguerta",
       speciality: "Dermatologue",
-      img: "/path/to/doctor4-image.png",
+      img: "/img/dreamfire.jpg",
     },
   ];
 

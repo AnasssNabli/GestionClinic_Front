@@ -151,11 +151,11 @@ export function UpdateDepartement(props) {
           </div>
         </CardBody>
         <CardFooter className="pt-0 flex justify-between">
-          <Button fullWidth variant="gradient" onClick={props.handleOpen}>
+          <Button fullWidth className="bg-blue-900" onClick={props.handleOpen}>
             Annuler
           </Button>
           <div className="w-4"></div>
-          <Button fullWidth variant="gradient" onClick={handleSubmit}>
+          <Button fullWidth className="bg-blue-900" onClick={handleSubmit}>
             Mettre à jour
           </Button>
         </CardFooter>

@@ -5,8 +5,10 @@ import {
   CardBody,
   Typography,
   Avatar,
+
   Button
 } from "@material-tailwind/react";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { confirmation } from "@/widgets/alert_confirmation";
 import { UserPlusIcon } from "@heroicons/react/24/outline";
 import { fetchDepartements } from '@/services/departement.service';
@@ -22,6 +24,10 @@ export function Medecins() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDialogupOpen, setIsDialogupOpen] = useState(false); 
   const [medecinToUpdate, setMedecinToUpdate] = useState(null); 
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6; // Set items per page
 
   useEffect(() => {
     fetchData();
@@ -60,6 +66,13 @@ export function Medecins() {
     setIsDialogupOpen(false);
   };
 
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentMedecins = medecins.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(medecins.length / itemsPerPage);
+
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
@@ -76,7 +89,7 @@ export function Medecins() {
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["Nom", "Spécialisation", "Date de naissance", "CIN", "Téléphone", "Département", ""].map((el) => (
+                {["","Nom", "Spécialisation", "Date de naissance", "CIN", "Téléphone", "Département", ""].map((el) => (
                   <th
                     key={el}
                     className="border-b border-blue-gray-50 py-3 px-5 text-left"
@@ -97,7 +110,7 @@ export function Medecins() {
                   <td colSpan="7" className="py-3 px-5 text-center">Chargement...</td>
                 </tr>
               ) : (
-                medecins.map(({ id_medecin, utilisateur, specialisation, departement ,departementID}, key) => {
+                currentMedecins.map(({ id_medecin, utilisateur, specialisation, departement ,departementID}, key) => {
                   const className = `py-3 px-5 ${
                     key === medecins.length - 1
                       ? ""
@@ -106,9 +119,11 @@ export function Medecins() {
 
                   return (
                     <tr key={key}>
+                       <td className={className}><Avatar src={"/img/doctor.png"} alt={utilisateur.nom} size="sm" variant="rounded" /></td>
+                      
                       <td className={className}>
                         <div className="flex items-center gap-4">
-                          <Avatar src={"/img/doctor.png"} alt={utilisateur.nom} size="sm" variant="rounded" />
+                          
                           <div>
                             <Typography
                               variant="small"
@@ -149,31 +164,54 @@ export function Medecins() {
                         </Typography>
                       </td>
                       <td className={className}>
-                        <Button
-                          onClick={() => {
-                            setMedecinToUpdate({ id_medecin, utilisateur, specialisation, departementID });
-                            setIsDialogupOpen(true);
-                          }}
-                          color="blue"
-                          size="sm"
-                          className="mr-2"
-                        >
-                          Modifier
-                        </Button>
-                        <Button
-                          onClick={() => handleDelete(id_medecin)}
-                          color="red"
-                          size="sm"
-                        >
-                          Supprimer
-                        </Button>
+                        <div className="flex space-x-2 whitespace-nowrap">
+                          <Button
+                            onClick={() => {
+                              setMedecinToUpdate({ id_medecin, utilisateur, specialisation, departementID });
+                              setIsDialogupOpen(true);
+                            }}
+                            color="blue"
+                            size="sm"
+                            className="mr-2"
+                          >
+                            Modifier
+                          </Button>
+                          <Button
+                            onClick={() => handleDelete(id_medecin)}
+                            color="red"
+                            size="sm"
+                          >
+                            Supprimer
+                          </Button>
+                        </div>
                       </td>
+
                     </tr>
                   );
                 })
               )}
             </tbody>
           </table>
+          {/* Pagination Controls */}
+          <div className="flex justify-between items-center mt-4">
+            <Button
+            variant="text"
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+               <ArrowLeftIcon className="h-5 w-5" /> Previous
+            </Button>
+            <Typography variant="small" className="text-blue-gray-600">
+              Page {currentPage} sur {totalPages}
+            </Typography>
+            <Button
+            variant="text"
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+               Next <ArrowRightIcon className="h-5 w-5" />
+            </Button>
+          </div>
         </CardBody>
       </Card>
       <AddMedecin

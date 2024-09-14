@@ -7,17 +7,21 @@ import {
   Avatar,
   Button
 } from "@material-tailwind/react";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { UpdatePatient } from './UpdatePatient';
 import { fetchPatients, deletePatient } from "@/services/patients.service";
 import { confirmation } from "@/widgets/alert_confirmation";
-import Swal from 'sweetalert2'; // Ensure correct import
+import Swal from 'sweetalert2'; 
 
 export function Patients() {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDialogupOpen, setIsDialogupOpen] = useState(false);
-  const [patientToUpdate, setPatientToUpdate] = useState(null); 
+  const [patientToUpdate, setPatientToUpdate] = useState(null);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   useEffect(() => {
     fetchData();
@@ -30,17 +34,12 @@ export function Patients() {
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
-      setLoading(false); // Ensure loading state is cleared on error
+      setLoading(false);
     }
-  };
-
-  const handleAddPatientClick = () => {
-    setIsDialogOpen(true);
   };
 
   const handleDelete = async (id) => {
     const confirmer = await confirmation(); 
-    
     if (confirmer) {
       try {
         await deletePatient(id); 
@@ -56,29 +55,38 @@ export function Patients() {
     setIsDialogupOpen(false);
   };
 
+  // Pagination logic
+  const totalPages = Math.ceil(patients.length / itemsPerPage);
+  const currentPatients = patients.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
-      <CardHeader variant="gradient"  className="mb-8 p-6 flex justify-between items-center bg-blue-900">
+        <CardHeader variant="gradient" className="mb-8 p-6 flex justify-between items-center bg-blue-900">
           <Typography variant="h6" color="white">
             Tableau des Patients
           </Typography>
-         
         </CardHeader>
-    
+
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
                 {["Nom", "Email", "Téléphone", "CIN", "Adresse", ""].map((el) => (
-                  <th
-                    key={el}
-                    className="border-b border-blue-gray-50 py-3 px-5 text-left"
-                  >
-                    <Typography
-                      variant="small"
-                      className="text-[11px] font-bold uppercase text-blue-gray-400"
-                    >
+                  <th key={el} className="border-b border-blue-gray-50 py-3 px-5 text-left">
+                    <Typography variant="small" className="text-[11px] font-bold uppercase text-blue-gray-400">
                       {el}
                     </Typography>
                   </th>
@@ -91,17 +99,13 @@ export function Patients() {
                   <td colSpan="7" className="py-3 px-5 text-center">Chargement...</td>
                 </tr>
               ) : (
-                patients.length === 0 ? (
+                currentPatients.length === 0 ? (
                   <tr>
                     <td colSpan="7" className="py-3 px-5 text-center">Aucun patient trouvé</td>
                   </tr>
                 ) : (
-                  patients.map((patient) => {
-                    const className = `py-3 px-5 ${
-                      patient === patients[patients.length - 1]
-                        ? ""
-                        : "border-b border-blue-gray-50"
-                    }`;
+                  currentPatients.map((patient, key) => {
+                    const className = `py-3 px-5 ${key === currentPatients.length - 1 ? "" : "border-b border-blue-gray-50"}`;
 
                     return (
                       <tr key={patient.id_patient}>
@@ -109,11 +113,7 @@ export function Patients() {
                           <div className="flex items-center gap-4">
                             <Avatar src={"/img/patient.png"} alt={patient.utilisateur?.nom || "Patient"} size="sm" variant="rounded" />
                             <div>
-                              <Typography
-                                variant="small"
-                                color="blue-gray"
-                                className="font-semibold"
-                              >
+                              <Typography variant="small" color="blue-gray" className="font-semibold">
                                 {patient.utilisateur?.nom} {patient.utilisateur?.prenom}
                               </Typography>
                               <Typography className="text-xs font-normal text-blue-gray-500">
@@ -142,7 +142,6 @@ export function Patients() {
                             {patient.adresse}
                           </Typography>
                         </td>
-
                         <td className={className}>
                           <Button
                             onClick={() => {
@@ -172,7 +171,28 @@ export function Patients() {
           </table>
         </CardBody>
       </Card>
-      
+
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center mt-4">
+        <Button
+          variant="text"
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+        >
+          <ArrowLeftIcon className="h-5 w-5" /> Précédent
+        </Button>
+        <Typography variant="small" className="text-blue-gray-600">
+          Page {currentPage} sur {totalPages}
+        </Typography>
+        <Button
+          variant="text"
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+        >
+          Suivant <ArrowRightIcon className="h-5 w-5" />
+        </Button>
+      </div>
+
       {isDialogupOpen && (
         <UpdatePatient
           open={isDialogupOpen}

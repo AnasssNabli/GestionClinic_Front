@@ -13,36 +13,36 @@ export const fetchRendezVous = () => {
 
 export const fetchRendezVouss = async () => {
   try {
-      const response = await alexsys.get('/RendezVous', { headers });
-      const data = response.data;
+    const response = await alexsys.get('/RendezVous', { headers });
+    const data = response.data;
 
-      // Filtrer les rendez-vous avec le statut "Planifie"
-      const filteredData = data.filter(appointment => appointment.statut === "Planifie");
+    // Filtrer les rendez-vous avec le statut "Planifie"
+    const filteredData = data.filter(appointment => appointment.statut === "Planifie");
 
-      // Formater les donnÃ©es par date et heure
-      const formattedData = filteredData.reduce((acc, appointment) => {
-          const {id_RendezVous, date, heure, patientName } = appointment;
-          const formattedDate = new Date(date).toLocaleDateString();
-          const timeSlot = `${heure} - ${parseFloat(heure) + 1}.00`;
+    // Formater les données par date et heure
+    const formattedData = filteredData.reduce((acc, appointment) => {
+      const { id_RendezVous, date, heure } = appointment;
+      const formattedDate = new Date(date).toLocaleDateString();
+      const timeSlot = `${heure} - ${parseFloat(heure) + 1}.00`;
 
-          if (!acc[formattedDate]) {
-              acc[formattedDate] = {};
-          }
+      if (!acc[formattedDate]) {
+        acc[formattedDate] = {};
+      }
 
-          if (!acc[formattedDate][timeSlot]) {
-              acc[formattedDate][timeSlot] = {
-                  id: id_RendezVous,  // Inclure l'ID du rendez-vous
-                  name: patientName,
-              };
-          }
+      // Add full appointment data instead of only id and name
+      if (!acc[formattedDate][timeSlot]) {
+        acc[formattedDate][timeSlot] = {
+          ...appointment,  // Include all appointment data
+        };
+      }
 
-          return acc;
-      }, {});
+      return acc;
+    }, {});
 
-      return formattedData;
+    return formattedData;
   } catch (error) {
-      console.error("Error fetching rendez-vous:", error);
-      return {};
+    console.error("Error fetching rendez-vous:", error);
+    return {};
   }
 };
 
@@ -54,6 +54,8 @@ export const createRendezVous = (rendezVous) => {
 
 // Update the status of a rendez-vous
 export const updateRendezVousStatut = (id, statut) => {
+  console.log(id, statut);
+  
   return alexsys.put(`/RendezVous/UpdateStatut/${id}`, statut, { headers });
 }
 
