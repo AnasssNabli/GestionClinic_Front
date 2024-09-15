@@ -63,23 +63,19 @@ export function Secretaires() {
     setIsDialogupOpen(false);
   };
 
-  // Pagination Logic
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentSecretaires = secretaires.slice(indexOfFirstItem, indexOfLastItem);
+
   const totalPages = Math.ceil(secretaires.length / itemsPerPage);
-  const currentSecretaires = secretaires.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
   };
 
   const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
   };
 
   return (
@@ -119,7 +115,7 @@ export function Secretaires() {
                   <td colSpan="7" className="py-3 px-5 text-center">Chargement...</td>
                 </tr>
               ) : (
-                secretaires.map((secretaire, key) => {
+                currentSecretaires.map((secretaire, key) => {
                   const className = `py-3 px-5 ${
                     key === secretaires.length - 1
                       ? ""

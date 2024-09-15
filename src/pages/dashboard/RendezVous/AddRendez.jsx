@@ -30,6 +30,7 @@ export default function AddRendez(props) {
 
   const [errors, setErrors] = useState({});
   const [disponibilites, setDisponibilites] = useState([]);
+  const [rendezvous, setRendezvous] = useState([]);
   const [isHeureDisabled, setHeureDisabled] = useState(true);
 
   // Reset form data when the dialog is closed
@@ -73,11 +74,15 @@ export default function AddRendez(props) {
   
     try {
       const response = await getDisponibilite(day, formData.Date, id_medecin);
-      setDisponibilites(response);
+      console.log(response.rendezVous);
+      
+      setDisponibilites(response.disponibilites);
+      setRendezvous(response.rendezVous);
       setHeureDisabled(false);
     } catch (error) {
       console.error("Erreur lors de la récupération des disponibilités", error);
       setDisponibilites([]);
+      setRendezvous([]);
       setHeureDisabled(true);
       setFormData(prev => ({ ...prev, Heure: "" }));
     }
@@ -145,6 +150,41 @@ export default function AddRendez(props) {
   
   const handleSelectChangee = (value) => {
     setFormData({ ...formData, Id_Medecin: value });
+  };
+
+  const generateHeureOptions = () => {
+    const options = [];
+    disponibilites.forEach(dispo => {
+      const { heureDebut, heureFin } = dispo;
+      const startHour = parseInt(heureDebut.split(':')[0], 10);
+      const endHour = parseInt(heureFin.split(':')[0], 10);
+
+      for (let hour = startHour; hour < endHour; hour++) {
+        const startTime = `${hour < 10 ? '0' : ''}${hour}:00`;
+        const endTime = `${(hour + 1) < 10 ? '0' : ''}${hour + 1}:00`;
+        
+        // Check if the current hour is occupied by any rendezvous
+        const isAvailable = !rendezvous.some(rdv => {
+          const rdvStart = new Date(`${formData.Date}T${rdv.heure}`);
+          const rdvEnd = new Date(rdvStart.getTime() + 60 * 60 * 1000); // Assuming 1 hour duration
+
+          const currentStart = new Date(`${formData.Date}T${startTime}`);
+          const currentEnd = new Date(`${formData.Date}T${endTime}`);
+
+          return (rdvStart < currentEnd && rdvEnd > currentStart);
+        });
+
+        if (isAvailable) {
+          options.push(
+            <option key={startTime} value={startTime}>
+              {`${startTime} - ${endTime}`}
+            </option>
+          );
+        }
+      }
+    });
+
+    return options.length > 0 ? options : <option disabled>Aucune disponibilité</option>;
   };
 
   return (
@@ -276,33 +316,7 @@ export default function AddRendez(props) {
                   error={!!errors.Heure}
                 >
                   <option value="">Sélectionnez une heure</option>
-                  {disponibilites.length > 0 ? (
-                    disponibilites.map((dispo) => {
-                      const heureDebut = dispo.heureDebut;
-                      const heureFin = dispo.heureFin;
-
-                      // Convert heureDebut and heureFin to numbers for hours
-                      let startHour = parseInt(heureDebut.split(':')[0], 10);
-                      let endHour = parseInt(heureFin.split(':')[0], 10);
-
-                      // Create options for each hour between heureDebut and heureFin
-                      const options = [];
-                      for (let hour = startHour; hour < endHour; hour++) {
-                        const startTime = `${hour < 10 ? '0' : ''}${hour}:00`;
-                        const endTime = `${(hour + 1) < 10 ? '0' : ''}${hour + 1}:00`;
-
-                        options.push(
-                          <option key={startTime} value={startTime}>
-                            {`${startTime} - ${endTime}`}
-                          </option>
-                        );
-                      }
-
-                      return options;
-                    })
-                  ) : (
-                    <option disabled>Aucune disponibilité</option>
-                  )}
+                  {generateHeureOptions()}
                 </select>
               </div>
               {errors.Heure && (
@@ -315,7 +329,7 @@ export default function AddRendez(props) {
           </div>
         </CardBody>
         <CardFooter className="pt-0 flex justify-between">
-        <Button fullWidth className="bg-blue-900" onClick={props.handleOpen}>
+          <Button fullWidth className="bg-blue-900" onClick={props.handleOpen}>
             Annuler
           </Button>
           <div className="w-4"></div>

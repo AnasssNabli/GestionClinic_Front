@@ -14,16 +14,7 @@ const login = async (Email, Password) => {
 const register = async (user) => {
   try {
     console.log(user);
-    const response = await alexsys.post(`/Auth/Register`, {
-      "type": "admin",
-      "Email": "admin@gmail.com",
-      "Password": "Anas246@",
-      "Nom": "John",
-      "Prenom": "QT",
-      "Cin":"BJ5866",
-      "Telephone": "0660605050",
-      "DateNaissance": "1992-03-25"
-    } );
+    const response = await alexsys.post(`/Auth/Register`, user );
     console.log("register");
       const resp = await login(user.Email, user.Password);
       return resp;
